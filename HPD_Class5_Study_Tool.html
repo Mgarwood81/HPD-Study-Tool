@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Henderson PD Academy — Class 5 Study Tool</title>
+<style>
+  :root{
+    --navy:#0b1f3a;
+    --navy2:#122a4d;
+    --gold:#c8a04d;
+    --gold-light:#e8cf8a;
+    --paper:#f6f4ee;
+    --ink:#1b1b1b;
+    --muted:#5b6472;
+    --green:#2e7d46;
+    --red:#a5312c;
+    --card:#ffffff;
+    --border:#d8d2c2;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Georgia, "Times New Roman", serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  header{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:#fff;
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    border-bottom:4px solid var(--gold);
+  }
+  header .badge{
+    width:52px;height:52px;border-radius:50%;
+    background:var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:bold;color:var(--navy);font-size:20px;
+    flex-shrink:0;
+    font-family:Arial, sans-serif;
+  }
+  header h1{
+    margin:0;
+    font-size:20px;
+    letter-spacing:0.5px;
+  }
+  header p{
+    margin:2px 0 0;
+    font-size:13px;
+    color:var(--gold-light);
+    font-family:Arial, sans-serif;
+  }
+  nav{
+    display:flex;
+    background:var(--navy2);
+    border-bottom:2px solid var(--gold);
+    overflow-x:auto;
+  }
+  nav button{
+    font-family:Arial, sans-serif;
+    background:none;
+    border:none;
+    color:#cdd7e6;
+    padding:12px 20px;
+    font-size:14px;
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  nav button.active{
+    color:#fff;
+    border-bottom:3px solid var(--gold);
+    background:rgba(255,255,255,0.06);
+    font-weight:bold;
+  }
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px;
+  }
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:16px;
+    font-family:Arial, sans-serif;
+    font-size:13px;
+  }
+  .controls label{display:flex;flex-direction:column;gap:4px;color:var(--muted);}
+  select, input[type="text"], input[type="number"]{
+    font-family:Arial, sans-serif;
+    padding:6px 8px;
+    border:1px solid var(--border);
+    border-radius:5px;
+    background:#fff;
+    font-size:13px;
+  }
+  button.btn{
+    font-family:Arial, sans-serif;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:8px 14px;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  button.btn:hover{background:var(--navy2);}
+  button.btn.gold{background:var(--gold);color:var(--navy);font-weight:bold;}
+  button.btn.gold:hover{background:var(--gold-light);}
+  button.btn.outline{background:#fff;color:var(--navy);border:1px solid var(--navy);}
+  button.btn.green{background:var(--green);}
+  button.btn.red{background:var(--red);}
+  button.btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  h2.section-title{
+    font-size:22px;
+    color:var(--navy);
+    border-bottom:2px solid var(--gold);
+    padding-bottom:6px;
+    margin-top:0;
+  }
+  .intro-box{
+    background:#fff9e9;
+    border:1px solid var(--gold);
+    border-radius:8px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    font-size:14px;
+    line-height:1.5;
+  }
+  table.weekTable{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--card);
+    font-size:13px;
+    font-family:Arial, sans-serif;
+  }
+  table.weekTable th, table.weekTable td{
+    border:1px solid var(--border);
+    padding:8px 10px;
+    text-align:left;
+    vertical-align:top;
+  }
+  table.weekTable th{
+    background:var(--navy);
+    color:#fff;
+    position:sticky;
+    top:0;
+  }
+  table.weekTable tr:nth-child(even){background:#faf8f2;}
+  table.weekTable td.weeknum{
+    font-weight:bold;
+    color:var(--navy);
+    background:var(--gold-light);
+    text-align:center;
+    font-size:15px;
+  }
+  .tag{
+    display:inline-block;
+    background:var(--navy);
+    color:#fff;
+    font-size:11px;
+    padding:2px 6px;
+    border-radius:4px;
+    margin:1px 3px 1px 0;
+    font-family:Arial, sans-serif;
+  }
+  .tag.gold{background:var(--gold);color:var(--navy);}
+
+  /* Flashcards */
+  .card-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .flashcard{
+    width:100%;
+    max-width:640px;
+    min-height:220px;
+    background:var(--card);
+    border:2px solid var(--navy);
+    border-radius:14px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    padding:26px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    position:relative;
+  }
+  .flashcard .cat{
+    position:absolute;top:10px;left:14px;
+    font-family:Arial, sans-serif;
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+  .flashcard .weekmark{
+    position:absolute;top:10px;right:14px;
+    font-family:Arial, sans-serif;
+    font-size:11px;
+    color:var(--gold);
+    font-weight:bold;
+  }
+  .flashcard .front-text{
+    font-size:26px;
+    font-weight:bold;
+    color:var(--navy);
+  }
+  .flashcard .back-text{
+    font-size:15px;
+    line-height:1.55;
+    text-align:left;
+  }
+  .flashcard .hint{
+    font-family:Arial, sans-serif;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:14px;
+  }
+  .flashcard ul{margin:6px 0 0 0;padding-left:20px;}
+  .card-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .progress-line{
+    font-family:Arial, sans-serif;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .score-pills{
+    display:flex;
+    gap:10px;
+    font-family:Arial, sans-serif;
+    font-size:13px;
+  }
+  .pill{padding:4px 10px;border-radius:12px;font-weight:bold;}
+  .pill.got{background:#e3f3e6;color:var(--green);}
+  .pill.miss{background:#fbe6e4;color:var(--red);}
+
+  /* Quiz */
+  .quiz-question{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:14px;
+  }
+  .quiz-question .qcat{
+    font-family:Arial, sans-serif;
+    font-size:11px;
+    text-transform:uppercase;
+    color:var(--muted);
+    letter-spacing:1px;
+  }
+  .quiz-question .qtext{
+    font-size:18px;
+    font-weight:bold;
+    color:var(--navy);
+    margin:8px 0 14px;
+  }
+  .opt-btn{
+    display:block;
+    width:100%;
+    text-align:left;
+    font-family:Arial, sans-serif;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:10px 14px;
+    margin-bottom:8px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .opt-btn:hover{border-color:var(--navy);}
+  .opt-btn.correct{background:#e3f3e6;border-color:var(--green);font-weight:bold;}
+  .opt-btn.wrong{background:#fbe6e4;border-color:var(--red);}
+  .opt-btn:disabled{cursor:default;}
+  .quiz-summary{
+    background:var(--card);
+    border:2px solid var(--gold);
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+  }
+  .quiz-summary .bigscore{
+    font-size:42px;
+    font-weight:bold;
+    color:var(--navy);
+  }
+  .review-item{
+    border-top:1px solid var(--border);
+    padding:10px 0;
+    text-align:left;
+    font-size:13px;
+    font-family:Arial, sans-serif;
+  }
+  .review-item .rq{font-weight:bold;color:var(--navy);}
+  .review-item .ra-correct{color:var(--green);}
+  .review-item .ra-wrong{color:var(--red);text-decoration:line-through;}
+
+  /* Reference */
+  .ref-item{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px 16px;
+    margin-bottom:10px;
+  }
+  .ref-item h3{
+    margin:0 0 4px;
+    color:var(--navy);
+    font-size:16px;
+  }
+  .ref-item .meta{
+    font-family:Arial, sans-serif;
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .ref-item ul{margin:4px 0;padding-left:20px;font-size:14px;line-height:1.5;}
+  .ref-item p{margin:4px 0;font-size:14px;line-height:1.55;}
+  .no-results{color:var(--muted);font-family:Arial, sans-serif;padding:20px;text-align:center;}
+  footer{
+    text-align:center;
+    font-family:Arial, sans-serif;
+    font-size:12px;
+    color:var(--muted);
+    padding:24px 0 40px;
+  }
+  .disclaimer{
+    font-family:Arial, sans-serif;
+    font-size:11.5px;
+    color:var(--muted);
+    background:#f1efe6;
+    border-left:3px solid var(--gold);
+    padding:8px 12px;
+    margin:10px 0 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">HPD</div>
+  <div>
+    <h1>Henderson Police Academy — Class 5</h1>
+    <p>Recruit Study Booklet · Interactive Study Tool</p>
+  </div>
+</header>
+
+<nav>
+  <button data-panel="guide" class="active">Study Guide</button>
+  <button data-panel="flash">Flashcards</button>
+  <button data-panel="quiz">Quiz</button>
+  <button data-panel="ref">Reference</button>
+</nav>
+
+<main>
+
+  <!-- STUDY GUIDE -->
+  <section id="guide" class="panel active">
+    <h2 class="section-title">Weekly Study Guide</h2>
+    <div class="intro-box">
+      <strong>Recruit Study Assignments</strong> (verbatim definitions, crime elements, case law, radio codes, phonetic alphabet) must be completed <strong>before</strong> the start of the week listed — the week number is the material you're responsible for during that week's inspections and tests.
+      <br><br>
+      Verbatim definitions are memorized word-for-word and begin/end with <strong>"Sir"</strong> or <strong>"Ma'am."</strong> Elements of definitions and crime elements don't have to be verbatim, but every element must be stated, also beginning with <strong>"Sir"</strong> or <strong>"Ma'am."</strong>
+    </div>
+    <div class="controls">
+      <label>Jump to week
+        <select id="guideWeekJump">
+          <option value="">— select —</option>
+        </select>
+      </label>
+      <button class="btn outline" id="guideExpandAll">Expand all</button>
+    </div>
+    <div id="guideContent"></div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flash" class="panel">
+    <h2 class="section-title">Flashcards</h2>
+    <div class="controls">
+      <label>Category
+        <select id="fcCategory">
+          <option value="all">Everything</option>
+          <option value="verbatim">Verbatim Definitions</option>
+          <option value="elements">Elements of Definitions</option>
+          <option value="crime">Crime Elements</option>
+          <option value="code400">400 Codes</option>
+          <option value="miscCode">Radio / Misc Codes</option>
+          <option value="phonetic">Phonetic Alphabet</option>
+          <option value="caselaw">Case Law</option>
+        </select>
+      </label>
+      <label>Week scope
+        <select id="fcWeekScope"></select>
+      </label>
+      <label>Order
+        <select id="fcOrder">
+          <option value="inorder">In order</option>
+          <option value="shuffle">Shuffled</option>
+        </select>
+      </label>
+      <button class="btn gold" id="fcStart">Build deck</button>
+    </div>
+    <div id="fcArea"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="panel">
+    <h2 class="section-title">Quiz Mode</h2>
+    <div class="controls" id="quizSetup">
+      <label>Category
+        <select id="qzCategory">
+          <option value="mixed">Mixed</option>
+          <option value="verbatim">Verbatim Definitions</option>
+          <option value="elements">Elements of Definitions</option>
+          <option value="crime">Crime Elements (name ↔ statute)</option>
+          <option value="code400">400 Codes</option>
+          <option value="miscCode">Radio / Misc Codes</option>
+          <option value="phonetic">Phonetic Alphabet</option>
+          <option value="caselaw">Case Law (name ↔ citation)</option>
+        </select>
+      </label>
+      <label>Week scope
+        <select id="qzWeekScope"></select>
+      </label>
+      <label>Questions
+        <select id="qzCount">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="9999">Max</option>
+        </select>
+      </label>
+      <button class="btn gold" id="qzStart">Start quiz</button>
+    </div>
+    <div id="qzArea"></div>
+  </section>
+
+  <!-- REFERENCE -->
+  <section id="ref" class="panel">
+    <h2 class="section-title">Reference Browser</h2>
+    <div class="controls">
+      <label>Search
+        <input type="text" id="refSearch" placeholder="e.g. burglary, 415, Miranda...">
+      </label>
+      <label>Category
+        <select id="refCategory">
+          <option value="all">All</option>
+          <option value="verbatim">Verbatim Definitions</option>
+          <option value="elements">Elements of Definitions</option>
+          <option value="crime">Crime Elements</option>
+          <option value="code400">400 Codes</option>
+          <option value="miscCode">Radio / Misc Codes</option>
+          <option value="phonetic">Phonetic Alphabet</option>
+          <option value="caselaw">Case Law</option>
+        </select>
+      </label>
+      <label>Week
+        <select id="refWeekScope"></select>
+      </label>
+    </div>
+    <div id="refContent"></div>
+  </section>
+
+</main>
+
+<footer>
+  Built from the Henderson Police Academy Class 5 Recruit Study Booklet. Case-law holdings noted in this tool are brief study aids from general legal knowledge, not verbatim booklet text — confirm exact wording expected by TAC staff before an inspection.
+</footer>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+
+const WEEK_META = [
+  {n:1, codes:"401 – 405Z", phonetics:"A – I"},
+  {n:2, codes:"406 – 411Z", phonetics:"J – R"},
+  {n:3, codes:"412A – 416U", phonetics:"S – Z"},
+  {n:4, codes:"417 – 425B", phonetics:""},
+  {n:5, codes:"426 – 437FS", phonetics:""},
+  {n:6, codes:"438 – 460", phonetics:""},
+  {n:7, codes:"463 – 497", phonetics:""},
+  {n:8, codes:"Code 1, 2, 3, 4, 5", phonetics:""},
+  {n:9, codes:"Code 6A, 6B, 6C, 7, 8, 9, Code Red", phonetics:""},
+  {n:10, codes:"All codes / phonetics (cumulative review)", phonetics:""},
+  {n:11, codes:"", phonetics:""},
+  {n:12, codes:"", phonetics:""},
+  {n:13, codes:"", phonetics:""},
+  {n:14, codes:"", phonetics:""},
+  {n:15, codes:"", phonetics:""},
+];
+
+const WEEK_CASELAW = {
+  1:["Brady v. Maryland, 373 U.S. 83 (1963)"],
+  2:["Terry v. Ohio, 392 U.S. 1 (1968)","Michigan v. Long, 463 U.S. 1032 (1983)"],
+  3:["Miranda v. Arizona, 384 U.S. 436 (1966)","Payton v. New York, 445 U.S. 573 (1980)"],
+  4:["Tennessee v. Garner, 471 U.S. 1 (1985)","Hudson v. McMillian, 503 U.S. 1 (1992)"],
+  5:["Graham v. Connor, 490 U.S. 386 (1989)","Bautista v. US, 684 F.2d 1286 (1982)"],
+  6:["McDonald v. Chicago, 561 U.S. 742 (2010)","United States v. Ross, 456 U.S. 798 (1982)","Wyoming v. Houghton, 526 U.S. 295 (1999)"],
+  9:["Florida v. J. L., 529 U.S. 266 (2000)","US v. Williams, 553 U.S. 285 (2008)"],
+  11:["In Re Gault, 387 U.S. 1 (1967)"],
+  12:["Whren v. US, 517 U.S. 806 (1996)","US v. Cortez, 449 U.S. 411 (1981)"],
+  13:["Carroll v. US, 267 U.S. 132 (1925)","US v. Lee, 274 U.S. 559 (1927)"],
+  14:["Harris v. US, 331 U.S. 145 (1947)","Washington v. Chrisman, 455 U.S. 1 (1982)"],
+  15:["Navarette v. California, 572 U.S. ___ (2014)","Lloyd v. Nevada, No. 56706 (2013)","USA v. Gould, No. 0230629CV0P (5th Cir.) (2004)"]
+};
+
+// Case name -> {citation, holding (study note, not verbatim booklet text)}
+const CASELAW_INFO = {
+  "Brady v. Maryland, 373 U.S. 83 (1963)": "Prosecutors must disclose evidence favorable to the defense that is material to guilt or punishment; suppressing it violates due process.",
+  "Terry v. Ohio, 392 U.S. 1 (1968)": "Established 'stop and frisk' — an officer may briefly detain and pat down a person for weapons based on reasonable suspicion of crime and danger, short of full probable cause.",
+  "Michigan v. Long, 463 U.S. 1032 (1983)": "Extended Terry to vehicles — officers may search the passenger compartment for weapons during a valid stop if they reasonably believe the suspect is dangerous.",
+  "Miranda v. Arizona, 384 U.S. 436 (1966)": "Suspects must be advised of their right to remain silent and to counsel before custodial interrogation.",
+  "Payton v. New York, 445 U.S. 573 (1980)": "Absent consent or exigent circumstances, police need an arrest warrant (or search warrant with reason to believe suspect is home) to enter a home to arrest.",
+  "Tennessee v. Garner, 471 U.S. 1 (1985)": "Deadly force against a fleeing suspect is a seizure; it's only reasonable if the suspect poses a significant threat of death or serious injury to the officer or others.",
+  "Hudson v. McMillian, 503 U.S. 1 (1992)": "Excessive force against a prisoner can violate the Eighth Amendment even without serious injury, if force was used maliciously and sadistically to cause harm.",
+  "Graham v. Connor, 490 U.S. 386 (1989)": "Excessive force claims during a stop, arrest, or seizure are judged under the Fourth Amendment's 'objective reasonableness' standard, not intent or motive.",
+  "Bautista v. US, 684 F.2d 1286 (1982)": "Ninth Circuit case addressing the reasonableness of an investigative stop/search based on the totality of circumstances known to the officer.",
+  "McDonald v. Chicago, 561 U.S. 742 (2010)": "Held the Second Amendment right to keep and bear arms applies to state and local governments through the Fourteenth Amendment.",
+  "United States v. Ross, 456 U.S. 798 (1982)": "If officers have probable cause to search a vehicle, they may search the entire vehicle and any containers inside that could hold the object of the search.",
+  "Wyoming v. Houghton, 526 U.S. 295 (1999)": "Probable cause to search a car extends to a passenger's belongings capable of concealing the object of the search.",
+  "Florida v. J. L., 529 U.S. 266 (2000)": "An anonymous tip alone, without corroboration or predictive detail, does not by itself justify a Terry stop and frisk.",
+  "US v. Williams, 553 U.S. 285 (2008)": "Upheld a federal statute criminalizing the pandering/solicitation of child pornography against a First Amendment overbreadth challenge.",
+  "In Re Gault, 387 U.S. 1 (1967)": "Juveniles facing delinquency proceedings are entitled to due process — notice of charges, right to counsel, confrontation of witnesses, and privilege against self-incrimination.",
+  "Whren v. US, 517 U.S. 806 (1996)": "A traffic stop is reasonable if there's probable cause of a traffic violation, regardless of the officer's actual subjective motive for the stop.",
+  "US v. Cortez, 449 U.S. 411 (1981)": "Established the 'totality of the circumstances' test courts use to decide whether an officer had reasonable suspicion for an investigative stop.",
+  "Carroll v. US, 267 U.S. 132 (1925)": "Created the automobile exception — officers with probable cause may search a vehicle without a warrant because of its inherent mobility.",
+  "US v. Lee, 274 U.S. 559 (1927)": "Early case holding that using a searchlight to observe illegal cargo on a boat in plain view was not an unconstitutional search.",
+  "Harris v. US, 331 U.S. 145 (1947)": "Upheld a broad search incident to a lawful arrest, sustaining seizure of evidence found during the search of the arrestee's premises (later narrowed by Chimel v. California).",
+  "Washington v. Chrisman, 455 U.S. 1 (1982)": "An officer may accompany an arrestee to retrieve belongings and may seize evidence or contraband found in plain view during that accompaniment.",
+  "Navarette v. California, 572 U.S. ___ (2014)": "An anonymous 911 tip reporting specific, contemporaneous reckless driving can, under the totality of circumstances, supply reasonable suspicion for a traffic stop.",
+  "Lloyd v. Nevada, No. 56706 (2013)": "Nevada state case referenced in this booklet's Week 15 material — confirm the specific holding taught by your TAC staff/case reporter.",
+  "USA v. Gould, No. 0230629CV0P (5th Cir.) (2004)": "Fifth Circuit case referenced in this booklet's Week 15 material — confirm the specific holding taught by your TAC staff/case reporter."
+};
+
+const VERBATIMS = [
+ {term:"ARREST", def:"The taking of a person into custody in a case and in the manner authorized by law.", week:1},
+ {term:"CRIME", def:"A crime is an act or omission forbidden by law, punishable upon conviction by death, imprisonment, fine or other penal discipline.", week:1},
+ {term:"PROBABLE CAUSE", def:"Probable cause exists when the facts and circumstances known to the officer would warrant a prudent man in believing that a crime had been committed and that the accused has committed it.", week:1},
+ {term:"REASONABLE SUSPICION", def:"Specific, articulable rational facts causing an officer to believe a person's activity is related to a crime that has occurred, is occurring, or is about to occur.", week:1},
+ {term:"ELEMENTS OF A CRIME", def:"In every crime or public offense, there must exist a union or joint operation of act and intention or criminal negligence.", week:2},
+ {term:"INTENT", def:"Intention is manifested by the circumstances connected to the perpetration of the offense and the sound mind and discretion of the person accused.", week:2},
+ {term:"SOUND MIND", def:"A person shall be considered of sound mind who is neither an idiot nor a lunatic nor affected with insanity and who has reached the age of 14 years or before that age if such person knew the distinction between good and evil.", week:2},
+ {term:"CORPUS DELICTI", def:"The substantial and fundamental facts necessary to prove the commission of a specific crime or offense.", week:2},
+ {term:"PRIMA FACIA CASE", def:"Legally sufficient to establish a fact or a case unless disproved.", week:2},
+ {term:"FELONY", def:"Punishable by death or imprisonment in the state penitentiary.", week:3},
+ {term:"GROSS MISDEMEANOR", def:"Punishable by fine of not more than $2,000.00 or by imprisonment in the county jail for not more than 1 year or by both fine and imprisonment.", week:3},
+ {term:"MISDEMEANOR", def:"Punishable by fine of not more than $1,000.00 or imprisonment in the city or county jail for not more than 6 months, or by both fine and imprisonment.", week:3},
+ {term:"ASSAULT", def:"Intentionally placing another person in reasonable apprehension of immediate bodily harm.", week:3},
+ {term:"BATTERY", def:"Any willful and unlawful use of force or violence upon the person of another.", week:3},
+ {term:"SUBSTANTIAL BODILY HARM", def:"Any bodily injury, which creates a substantial risk of death, causes serious permanent disfigurement, protracted loss or impairment of the function of any bodily member, organ or prolonged physical pain.", week:3},
+ {term:"HOME INVASION", def:"Every person who, by day or night, forcibly enters an inhabited dwelling without permission of the owner, resident or lawful occupant, which involves any act of physical force resulting in damage to the structure, whether or not a person is present at the time of the entry, is guilty of invasion of the home.", week:4},
+ {term:"SEXUAL ASSAULT", def:"A person who subjects another person to sexual penetration, or who forces another person to make sexual penetration on himself or another, against the victim's will is guilty of sexual assault.", week:4},
+ {term:"STATUTORY SEXUAL SEDUCTION", def:"Ordinary sexual intercourse, anal intercourse or sexual penetration committed by a person 18 years of age or older with a person who is 14 or 15 years of age and who is at least 4 years younger than the perpetrator.", week:4},
+ {term:"SEXUAL PENETRATION", def:"Cunnilingus, fellatio, or any intrusion, however slight, of any part of a person's body or any object manipulated or inserted by a person into the genital or anal openings of the body of another, including sexual intercourse in its ordinary meaning. The term does not include any such conduct for medical purposes.", week:4},
+ {term:"LARCENY FROM PERSON", def:"Shall consist of the unlawful taking, from the person of another, without his consent, any money, property or thing of value, under circumstances not amounting to robbery.", week:5},
+ {term:"ROBBERY", def:"The unlawful taking of personal property from the person of another, or in his presence, against his will, by means of force or violence or fear of injury immediate or future.", week:5},
+ {term:"HOMICIDE", def:"The killing of one human being by another.", week:5},
+];
+
+const ELEMENTS_OF_DEF = [
+ {term:"PRINCIPALS", def:"Every person who aids or abets in the commission of a crime, whether the person directly commits the act constituting the offense, or aids or abets in its commission, and whether present or absent, and every person who, directly or indirectly, counsels, encourages, hires, commands, induces or otherwise procures another to commit a crime is a principal, and shall be proceeded against and punished as such.", week:1},
+ {term:"ACCESSORIES", def:"Every person who is not the spouse or domestic partner of the offender and who, after the commission of a crime, destroys or conceals, or aids in the destruction or concealment of, material evidence, or harbors or conceals such offender with intent that the offender may avoid or escape from arrest, trial, conviction or punishment, having knowledge that such offender has committed a crime or is liable to arrest, is an accessory to the crime.", week:1},
+ {term:"CLOSE RELATIONSHIP", def:"Husband, wife, brother, sister, parent, grandparent, child or grandchild to the offender.", week:2},
+ {term:"MAYHEM", def:"Unlawfully depriving a human being of a member of his or her body, or disfiguring or rendering it useless.", week:3},
+ {term:"BURGLARY", def:"Every person who, either by day or night, enters any structure or residence with intent to commit grand larceny, or petit larceny, any felony, assault or battery, is guilty of burglary. The intent to commit a petit larceny in an open commercial business is insufficient BY ITSELF to establish burglary unless the perpetrator has two prior convictions for petty larceny and/or a prior felony conviction (must be within 7 years).", week:4},
+ {term:"MANSLAUGHTER", def:"The unlawful killing of a human being without malice, either expressed or implied, and without any mixture of deliberation.", week:5},
+ {term:"MURDER", def:"The unlawful killing of a human being with malice aforethought, either expressed or implied, or caused by a controlled substance, which was sold, given, traded or otherwise made available to a person.", week:5},
+ {term:"EXPRESS MALICE", def:"All that malice capable of proof by external circumstances.", week:5},
+ {term:"IMPLIED MALICE", def:"Malice shall be implied when no considerable provocation appears, or when all the circumstances of the killing show an abandoned and malignant heart.", week:5},
+];
+
+// Crimes: elements arrays are the bullet points from the Criminal Offense (NRS) section.
+// week = the week it appears under CRIME ELEMENTS in the study schedule (null = supplemental/general, not separately assigned in the week list)
+const CRIMES = [
+ {name:"OBSTRUCTING A POLICE OFFICER", nrs:"NRS 197.190", cls:"M", week:1, elements:["After due notice, a person","Refuses or neglects to provide lawfully required information, or","Makes any willfully untrue, misleading or exaggerated statement, or","Willfully hinder, delay or obstruct,","A peace officer","In the discharge of his/her official duties"]},
+ {name:"RESISTING A POLICE OFFICER", nrs:"NRS 199.280", cls:"M/F", week:1, elements:["Willfully resists, delays or obstructs,","A public officer in discharging or attempting to discharge any legal duty,","With a dangerous weapon in the course of such resistance (F),","Without a dangerous weapon (M)."]},
+ {name:"GRAND LARCENY", nrs:"NRS 205.220", cls:"F", week:1, elements:["Intentionally steals, takes and carries away, leads away or drives away,","Personal goods or property of another","With a value of $1200 or more, OR","Livestock of any value."]},
+ {name:"PETIT LARCENY", nrs:"NRS 205.240", cls:"M", week:1, elements:["Intentionally steals, takes and carries away, leads away or drives away,","Personal goods or property of another","With a value less than $1200."]},
+ {name:"OPPRESSION UNDER COLOR OF OFFICE", nrs:"See Criminal Offense Section", cls:"—", week:1, elements:["Listed in Week 1 crime elements; full statutory text was not included in the source pages provided for this tool.","Confirm exact elements and classification with TAC staff / the full Criminal Offense Section."]},
+
+ {name:"GRAFFITI", nrs:"NRS 206.330", cls:"M/GM/F", week:2, elements:["A person who places graffiti on or otherwise defaces,","The public or private property, real or personal, of another, or any estray and livestock,","Without the permission of the owner.","If value of the loss is less than $250 (M).","If value of the loss is $250 or more but less than $5,000 (GM).","If value of the loss is $5,000 or more (F).","Note (2015 legislature): a 3rd graffiti conviction (any level), or any arrest after a single felony graffiti conviction, is an automatic Class D Felony regardless of damage amount."]},
+ {name:"ARSON 1ST DEGREE", nrs:"NRS 205.010", cls:"F", week:2, elements:["Willfully and maliciously,","Sets fire to, or causes to be burned, or aids, counsels or procures the burning of,","Any dwelling, house, mobile home or other structure (occupied or vacant) or any personal property which is occupied (e.g., boat, car)."]},
+ {name:"ARSON 2ND DEGREE", nrs:"NRS 205.015", cls:"F", week:2, elements:["Willfully and maliciously,","Sets fire to, or causes to be burned, or aids, conceals or procures the burning of,","Any abandoned building or structure."]},
+ {name:"ARSON 3RD DEGREE", nrs:"NRS 205.020", cls:"F", week:2, elements:["Willfully and maliciously,","Sets fire to, or causes to be burned, or aids, conceals or procures the burning of,","Any unoccupied personal property of another with value over $25, or unoccupied personal property in which another has a legal interest, or","Any timber, tree, forest, crops, etc. of another."]},
+ {name:"ARSON 4TH DEGREE", nrs:"NRS 205.025", cls:"F", week:2, elements:["Any attempt (including preparation) to commit first, second or third degree arson."]},
+ {name:"TRESPASS", nrs:"NRS 207.200", cls:"M", week:2, elements:["Willfully goes upon land or into any building of another,","With intent to vex or annoy the owner/occupant thereof, or to commit any unlawful act; OR","Willfully goes or remains upon any land or in any building after having been warned by the owner/occupant not to trespass.","Sufficient warning is given by conspicuous signs, painted boundaries, or fencing the area."]},
+ {name:"INJURY TO OTHER PROPERTY", nrs:"NRS 206.310", cls:"M/GM/F", week:2, elements:["Willfully or maliciously,","Destroy or injure any real or personal property of another,","Where no other punishment is otherwise specially prescribed.","If value of the loss is less than $250 (M).","If value of the loss is $250 or more but less than $5,000 (GM).","If value of the loss is $5,000 or more (F)."]},
+ {name:"POSSESSION OF BURGLARY TOOLS", nrs:"NRS 205.080", cls:"GM", week:2, elements:["Makes or has in his possession,","Any implement adapted, designed or commonly used for burglary, home invasion, larceny or other crimes,","Under circumstances showing intent to use in the commission of a crime, or knowing that the implement is intended to be so used.","Note: prima facie evidence of criminal intent if not possessed by a mechanic/tradesman at an established shop."]},
+ {name:"BURGLARY WITH A WEAPON/FIREARM", nrs:"NRS 205.060", cls:"F", week:2, elements:["Enters any structure (house, room, apartment, store, vehicle, trailer, boat, plane or other building),","With the intent to commit larceny, assault, battery or any felony,","And has in his possession, or gains possession of, any firearm or deadly weapon at any time during the commission of the crime or upon leaving the structure."]},
+ {name:"POSSESSING/RECEIVING STOLEN PROPERTY", nrs:"NRS 205.275", cls:"M/F", week:2, elements:["A person, for his own gain or to prevent the owner from possessing his property,","Buys, receives, possesses or withholds property,","Knowing it is stolen property, or under circumstances where a reasonable person would have cause to know it is stolen property.","If the value of property is $1200 or more (F). If less than $1200 (M).","Note: prima facie evidence if person possesses 3+ similar items with a manufacturer's serial number removed, altered or defaced."]},
+
+ {name:"ASSAULT WITH A DEADLY WEAPON", nrs:"NRS 200.471", cls:"F", week:3, elements:["Intentionally placing another person in reasonable apprehension of immediate bodily harm,","With the use of a deadly weapon (e.g., knife or firearm) or having the present ability to use a deadly weapon."]},
+ {name:"BATTERY WITH USE OF A DEADLY WEAPON", nrs:"NRS 200.481", cls:"F", week:3, elements:["Willful & unlawful use of force or violence upon the person of another,","With use of a deadly weapon."]},
+ {name:"BATTERY ON A PEACE OFFICER", nrs:"NRS 200.481", cls:"GM", week:3, elements:["Willful & unlawful use of force or violence upon an officer,","While the officer is performing his/her duties,","Without the use of a deadly weapon or substantial bodily harm,","The person charged knew or should have known that the victim was an officer."]},
+ {name:"BATTERY WITH SUBSTANTIAL BODILY HARM", nrs:"NRS 200.481", cls:"F", week:3, elements:["Willful & unlawful use of force or violence upon the person of another,","Without a deadly weapon and where substantial bodily harm results.","Note: 'Battery on an officer with SBH' combines this provision with the peace-officer element above — confirm the exact combined charge language with TAC staff."]},
+ {name:"BATTERY BY A PRISONER/PROBATIONER/PAROLEE", nrs:"NRS 200.481", cls:"F", week:3, elements:["Willful & unlawful use of force or violence upon the person of another,","Regardless of harm done and regardless of whether a deadly weapon is or isn't used,","By a prisoner in lawful custody, by a parolee, or by a person on probation."]},
+ {name:"PROVOKING AN ASSAULT", nrs:"NRS 200.490", cls:"M", week:3, elements:["Willfully and unlawfully provoke or attempt to provoke the commission of an assault,","By words, sign or gesture."]},
+
+ {name:"POSSESSION OF A CONTROLLED SUBSTANCE", nrs:"NRS 453.336", cls:"F", week:4, elements:["Knowingly and intentionally possesses,","A controlled substance,","Unless obtained directly from, or pursuant to, a prescription/order of a licensed practitioner acting in the course of professional practice."]},
+ {name:"POSSESS CONTROLLED SUBSTANCE WITH INTENT TO SELL", nrs:"NRS 453.337", cls:"F", week:4, elements:["Knowingly and intentionally possesses, actually or constructively,","Any controlled substance classified in schedule I or II,","With the intent to sell said substance."]},
+ {name:"POSSESS DANGEROUS DRUG WITHOUT PRESCRIPTION", nrs:"NRS 454.316", cls:"GM/F", week:4, elements:["Any person who possesses a dangerous drug,","Without a valid prescription, or without a legitimate business purpose listed in statute.","1st & 2nd offense = GM; 3rd offense = F."]},
+ {name:"POSSESSION OF HYPODERMIC DEVICE", nrs:"NRS 454.510", cls:"M", week:4, elements:["Have in one's possession or control,","Any hypodermic device, unless possession is in accordance with a legitimate prescription or other lawful purpose listed in NRS."]},
+ {name:"USE/POSSESS NARCOTICS PARAPHERNALIA", nrs:"NRS 453.566", cls:"M", week:4, elements:["Did use, or possess with intent to use, drug paraphernalia,","To plant, propagate, cultivate, grow, harvest, manufacture, compound, convert, produce, prepare, test, analyze, pack, repack, store, contain, conceal, inject, ingest, inhale or otherwise introduce a controlled substance into the human body.","Note: person under 21 may not possess marijuana paraphernalia; cannot arrest for a marijuana paraphernalia charge — see NRS 453D.130."]},
+ {name:"SALE OF CONTROLLED SUBSTANCE", nrs:"NRS 453.321", cls:"F", week:4, elements:["Knowingly and intentionally, actually or constructively,","Imports, transports, sells, exchanges, barters, supplies, prescribes, dispenses, gives away or administers (or offers/attempts same),","A controlled or counterfeit substance."]},
+ {name:"TRAFFICKING IN CONTROLLED SUBSTANCE (SCHEDULE I)", nrs:"NRS 453.3385", cls:"F", week:4, elements:["Knowingly and intentionally, actually or constructively,","Sells, manufactures, delivers or brings into this state,","Any controlled substance (or mixture) listed in schedule I, except marijuana.","Punishment level based on quantity: 4g–14g / 14g–28g / 28g or more."]},
+
+ {name:"HARASSMENT", nrs:"NRS 200.571", cls:"M/GM", week:5, elements:["Without lawful authority, knowingly threatens:","To cause bodily injury in the future to the victim or any other person; or","To cause physical damage to the property of another; or","To subject the person threatened to physical confinement or restraint; or","To do any act intended to substantially harm the person's physical or mental health/safety; and","The person by words or conduct places the recipient in reasonable fear the threat will be carried out.","1st offense = M; 2nd offense = GM."]},
+ {name:"STALKING", nrs:"NRS 200.575", cls:"M/GM", week:5, elements:["A person who, without lawful authority, willfully or maliciously,","Engages in a course of conduct that would cause a reasonable person to feel terrorized, frightened, intimidated or harassed, and","That actually causes the victim to feel terrorized, frightened, intimidated or harassed.","1st offense = M; 2nd offense = GM."]},
+ {name:"AGGRAVATED STALKING", nrs:"NRS 200.575", cls:"F", week:5, elements:["Same as stalking, and","Threatens the victim with intent to cause reasonable fear of death or substantial bodily injury, OR","Uses the Internet, email, text messaging or similar means to publish/display/distribute information in a manner that substantially increases risk of harm or violence to the victim."]},
+ {name:"VIOLATION OF TEMPORARY STALKING/HARASSMENT ORDER", nrs:"NRS 200.591", cls:"GM", week:5, elements:["Victim has petitioned for a temporary order (with or without notice), OR defendant charged with stalking/aggravated stalking/harassment and out on bail or found guilty, and","A temporary order of protection is/was granted, and","Defendant intentionally violates the order after service."]},
+ {name:"VIOLATION OF EXTENDED STALKING/HARASSMENT ORDER", nrs:"NRS 200.591", cls:"F", week:5, elements:["Victim has petitioned for an extended order with notice to defendant, OR defendant charged and out on bail/found guilty, and","An extended order of protection is/was granted, and","Defendant intentionally violates the order after service."]},
+ {name:"BATTERY – DOMESTIC VIOLENCE", nrs:"NRS 200.485", cls:"M/F", week:5, elements:["Willful & unlawful use of force or violence upon the person of another,","When accused has a 'domestic relationship' with the victim (NRS 33.018): spouse/former spouse, relative by blood/marriage, dating partner, co-parent, or minor child of any of those.","1st & 2nd offense = M; 3rd offense (2 prior domestic battery convictions within 7 years) = F."]},
+ {name:"SEXUAL ASSAULT", nrs:"NRS 200.366", cls:"F", week:5, elements:["Subjects another person to sexual penetration, or forces victim to make a sexual penetration on himself, another, or a beast,","Against the victim's will, or","Under conditions where the perpetrator knows or should know the victim is mentally or physically incapable of resisting or understanding the conduct."]},
+ {name:"STATUTORY SEXUAL SEDUCTION", nrs:"NRS 200.368", cls:"GM/F", week:5, elements:["Ordinary sexual intercourse, anal intercourse or sexual penetration,","Committed by a person 18+ with a person who is 14 or 15,","Who is at least 4 years younger than the perpetrator.","GM if perpetrator is under 21; F if perpetrator is 21 or older."]},
+ {name:"OBSCENE, THREATENING, ANNOYING PHONE CALLS", nrs:"NRS 201.255", cls:"M", week:5, elements:["Willfully makes a telephone call and addresses any obscene language or suggestion, or","Addresses a threat to inflict injury to a person, their property, or family member, or","Makes a call with intent to annoy another, whether or not conversation ensues."]},
+
+ {name:"MINOR LOITER WHERE ALCOHOLIC BEVERAGE IS SOLD", nrs:"NRS 202.030", cls:"M", week:6, elements:["Any person under 21 years, and","Loiters or remains on the premises of any saloon where alcoholic beverages are sold.","Does not apply to dining areas separate from the bar, or grocery/drugstores not serving for on-premises consumption."]},
+ {name:"FURNISHING ALCOHOLIC BEVERAGE TO MINOR", nrs:"NRS 202.055", cls:"M", week:6, elements:["Knowingly sells, gives or furnishes in any way any alcoholic beverage,","To any person under 21 years of age.","Parents, guardians and physicians are exempt from prosecution."]},
+ {name:"MINOR PURCHASE/CONSUME/POSSESS ALCOHOLIC BEVERAGE", nrs:"NRS 202.020", cls:"M", week:6, elements:["Any person under 21 who purchases an alcoholic beverage,","Consumes an alcoholic beverage in a saloon/resort/premises where liquor is sold, or","Possesses any alcoholic beverage in public.","Exceptions: religious purposes, presence of a parent/spouse/guardian 21+, medical prescription, private clubs, or in the course of lawful employment."]},
+ {name:"MINOR GAMBLING OR MINOR IN CASINO", nrs:"NRS 463.350", cls:"M", week:6, elements:["Being a person under age 21,","Found playing, allowed to play, placing wagers at, or collecting winnings from any gambling game, slot machine, race book, sports pool or pari-mutuel operator, OR","Found loitering in any premises where licensed gaming/wagering is operated,","Or employed as a gaming employee, except in a counting room."]},
+ {name:"USE OF FALSE IDENTIFICATION BY PERSON UNDER 21", nrs:"NRS 205.460", cls:"M", week:6, elements:["A person under age 21, using false identification,","For the purpose of purchasing or being served alcoholic liquor, OR","For the purpose of entering a gambling establishment or engaging in gambling."]},
+
+ {name:"MURDER", nrs:"NRS 200.010", cls:"F", week:7, elements:["Unlawful killing of a human being,","With malice aforethought, either expressed or implied, OR","Caused by a controlled substance that was sold, administered or given to a person, OR","Caused by a violation of NRS 453.3325."]},
+ {name:"MAYHEM", nrs:"NRS 200.280", cls:"F", week:7, elements:["Unlawfully depriving a person of a member of his body, or","Disfiguring or rendering it useless (e.g., putting out an eye, cutting out a tongue)."]},
+ {name:"CONVICTED PERSON (EX-FELON) TO REGISTER", nrs:"NRS 179C.100", cls:"M", week:7, elements:["Being a person convicted of two felonies (or one Class A felony),","Remain in the State of Nevada for more than 48 hours,","During that 48-hour period, fail to register with the sheriff or chief of police."]},
+ {name:"CONVICTED PERSON (EX-FELON) FAILURE TO CHANGE ADDRESS", nrs:"NRS 179C.110", cls:"M", week:7, elements:["Being a registered convicted person (ex-felon),","Fail to notify the sheriff or chief of police of a change of address within 48 hours of the change."]},
+ {name:"SEX OFFENDER FAILURE TO REGISTER", nrs:"NRS 179D.460", cls:"F", week:7, elements:["Being a person designated by law as a sex offender,","Remain in Nevada for more than 48 hours,","During that period, fail to register with the sheriff or chief of police.","See NRS 179D.097 for the list of sexual offenses."]},
+ {name:"SEX OFFENDER FAILURE TO CHANGE ADDRESS", nrs:"NRS 179D.470", cls:"F", week:7, elements:["Being a registered sex offender,","Fail to notify the sheriff or chief of police of a change of address within 48 hours of the change."]},
+
+ {name:"POSSESS FIREARM UNDER THE INFLUENCE", nrs:"NRS 202.257", cls:"M", week:8, elements:["Unlawful to have a firearm in actual physical possession,","With a BAC of 0.10 or more, or under the influence of a controlled substance (or combined influence), or","When a chemical renders the person incapable of safely exercising physical control of the firearm.","Exception: within one's personal residence, possessed solely for self-defense."]},
+ {name:"CARRYING LOADED RIFLE/SHOTGUN IN OR ON VEHICLE", nrs:"NRS 503.165", cls:"M", week:8, elements:["Carry a loaded rifle or shotgun (unexpended cartridge/shell in the firing chamber),","In any vehicle on any public highway or other way open to the public."]},
+ {name:"CARRYING CONCEALED WEAPON", nrs:"NRS 202.350.1d", cls:"GM/F", week:8, elements:["Carry upon his person,","Any explosive substance, dirk, dagger, machete, firearm (loaded or unloaded), pneumatic gun, or other dangerous or deadly weapon,","Concealed so as not to be discernible by ordinary observation.","A concealed firearm is a felony."]},
+ {name:"DRAWING DEADLY WEAPON IN THREATENING MANNER", nrs:"NRS 202.320", cls:"M", week:8, elements:["Willfully draws or exhibits any deadly weapon,","In the presence of two or more persons,","In a rude, angry or threatening manner, not in necessary self-defense."]},
+ {name:"AIMING FIREARM AT HUMAN BEING", nrs:"NRS 202.290", cls:"GM", week:8, elements:["Willfully aims any gun, pistol, revolver or other firearm (loaded or not),","At or toward any human being."]},
+ {name:"OWNERSHIP/POSSESSION OF FIREARM BY CERTAIN PERSONS PROHIBITED (EX-FELON)", nrs:"NRS 202.360", cls:"F", week:8, elements:["A person convicted of a felony (Nevada or elsewhere), or convicted of a misdemeanor crime of domestic violence,","Who owns, possesses, or has under custody/control,","Any firearm, loaded or unloaded, operable or inoperable.","Also prohibited: unlawful users of controlled substances; those adjudicated mentally ill; those unlawfully in the U.S."]},
+
+ {name:"CONSPIRACY", nrs:"NRS 199.480", cls:"F/GM", week:9, elements:["Two or more persons who conspire to commit murder, robbery, sexual assault, kidnapping (1st/2nd degree), arson (1st/2nd degree), involuntary servitude, trafficking in persons, sex trafficking, or a violation of NRS 200.465 (F), OR","Conspire to commit any other crime, falsely procure an arrest, maintain a false action, defraud, prevent lawful trade by force/threat, or commit acts injurious to public health/morals/trade/justice (GM)."]},
+ {name:"OBTAIN/USE PERSONAL IDENTIFYING INFO OF ANOTHER", nrs:"NRS 205.463", cls:"F", week:9, elements:["Knowingly obtains any personal identifying information of another, and","Uses it to harm that person or for any unlawful purpose, OR","Uses it to avoid or delay being prosecuted for an unlawful act.","Examples of 'personal identifying information': name, DL#, SSN, account numbers, DOB, employer, mother's maiden name, biometrics."]},
+ {name:"USE OF EXPLOSIVES TO DAMAGE PROPERTY", nrs:"NRS 202.830", cls:"F", week:9, elements:["Any person who maliciously damages, destroys, or attempts to damage or destroy,","Any building, vehicle or real property,","By means of an explosive."]},
+ {name:"BOMB THREATS", nrs:"NRS 202.840", cls:"F", week:9, elements:["Through any means of communication (mail, note, phone, radio, Internet, etc.),","Willfully makes a threat, or maliciously conveys false info knowing it false,","Concerning an attempt (or alleged attempt) to kill/injure/intimidate a person or damage/destroy property,","By means of an explosive, bomb, spring trap or similarly dangerous mechanism."]},
+ {name:"POSSESSION OF EXPLOSIVE/INCENDIARY DEVICE", nrs:"NRS 202.260", cls:"F", week:9, elements:["Unlawfully possesses, manufactures or disposes of,","Any explosive or incendiary device (constructed/altered/arranged so intended use would destroy or injure life or property),","With the intent to destroy life or property."]},
+ {name:"ARSON", nrs:"NRS 205.010–205.025", cls:"F", week:9, elements:["See Arson 1st–4th Degree (Week 2) for the specific degree elements."]},
+
+ {name:"UNLAWFUL TAKING OF VEHICLE", nrs:"NRS 205.2715", cls:"GM", week:10, elements:["Every person who takes, carries or drives away,","A vehicle of another,","Without the intent to permanently deprive the owner,","But without the consent of the owner.","Note: possession of a vehicle without owner consent may reasonably be inferred as having taken/driven it away."]},
+ {name:"INJURY TO/TAMPER WITH VEHICLE", nrs:"NRS 205.274", cls:"M/GM/F", week:10, elements:["Willfully breaks, injures, tampers with, or removes parts of a vehicle to injure/deface/destroy it, or to prevent its useful operation, OR","Climbs into/upon a vehicle to commit a crime or injury, or attempts to manipulate its controls while at rest, without owner consent.","Damage <$25: fine up to $500. $25–$250: M. $250–$5,000: GM. $5,000+: F."]},
+ {name:"POSSESS/RECEIVE STOLEN VEHICLE", nrs:"NRS 205.273", cls:"F", week:10, elements:["Any person who has in his possession any motor vehicle (regardless of value),","Which he knows or has reason to believe has been stolen, OR","With intent to procure/pass title, receives or transfers possession of a vehicle known/believed stolen."]},
+ {name:"THROWING SUBSTANCE AT / DAMAGING VEHICLE", nrs:"NRS 205.2741", cls:"M/GM/F", week:10, elements:["Throws any stone, rock, missile or substance at any bicycle or motor vehicle, OR","Wrongfully injures, defaces or damages any bicycle or motor vehicle or part.","Damage <$25: fine up to $500. $25–$250: M. $250–$5,000: GM. $5,000+: F."]},
+ {name:"GRAND LARCENY OF VEHICLE", nrs:"NRS 205.228", cls:"F", week:10, elements:["Intentionally steals, takes or drives away,","The vehicle of another (regardless of value),","With intent to permanently deprive the owner of the vehicle."]},
+ {name:"EMBEZZLE LEASED VEHICLE", nrs:"NRS 205.312", cls:"F", week:10, elements:["Any person who willfully or intentionally,","Fails to return a leased or rented vehicle to the owner,","Within 72 hours after the lease/rental agreement expired."]},
+
+ {name:"EMBEZZLEMENT", nrs:"NRS 205.300", cls:"M/F", week:11, elements:["Any bailee of money, goods or property who converts it to his own use, with intent to steal or defraud the owner, OR","Any agent/manager/clerk/entrusted person who uses or appropriates money/property/effects for a purpose other than that for which they were entrusted.","Punished as theft/larceny of property of that kind and value."]},
+ {name:"DEFRAUDING AN INNKEEPER", nrs:"NRS 205.445", cls:"M/F", week:11, elements:["Obtain food, lodging or credit at any hotel, inn, rooming house or similar,","Without paying, with the intent to defraud the proprietor.","$1200 or more: F. Less than $1200: M."]},
+ {name:"OBTAIN MONEY/PROPERTY UNDER FALSE PRETENSE", nrs:"NRS 205.380", cls:"M/F", week:11, elements:["Any person who knowingly and designedly,","By any false representation or pretense, with intent to cheat or defraud,","Obtains from another person any money, goods, service or thing of value.","$650 or more: F. Less than $650: M."]},
+ {name:"AFFRAY", nrs:"NRS 203.050", cls:"M", week:11, elements:["Two or more persons by agreement,","Fight in a public place,","To the terror of the citizens."]},
+
+ {name:"THEFT", nrs:"NRS 205.0832", cls:"F/M", week:12, elements:["Without lawful authority, knowingly controls property of another with intent to deprive; or converts/transfers/uses another's property or services without authorization; or","Obtains property/services by material misrepresentation with intent to deprive; or appropriates lost/mislaid/misdelivered property without notifying the true owner; or","Controls property knowing (or having reason to know) it was stolen; or obtains services/fuel without paying or agreeing to pay; or passes a bad check for property/services; or commits any act declared theft by statute.","$1200 or more: F. Under $1200: M."]},
+ {name:"FORGERY", nrs:"NRS 205.090", cls:"F", week:12, elements:["Falsely makes, alters, forges or counterfeits any document listed in statute (bank bill, note, check, draft, deed, will, etc.), or","Utters, publishes, passes or attempts to pass any such instrument,","Knowing it to be false/altered/forged/counterfeit, with intent to defraud."]},
+ {name:"ISSUANCE OF CHECK WITH INSUFFICIENT FUNDS", nrs:"NRS 205.130", cls:"M/GM/F", week:12, elements:["Willfully drawing or passing a check/draft without sufficient money/credit,","With intent to defraud and knowledge of insufficiency, to obtain money/property/services/credit.","$650 or less: M. $650 or more: F. For wages $650+: GM. Series of checks in 90 days totaling $650+: F. 3 prior misdemeanor bad-check convictions: F."]},
+ {name:"OBTAIN/POSSESS CREDIT/DEBIT CARD WITHOUT OWNERS CONSENT", nrs:"NRS 205.690", cls:"F", week:12, elements:["Steals, takes or removes a credit/debit card (or its number/identifying description) from another's possession without consent, OR","With knowledge it was stolen, receives it intending to circulate/use/sell/transfer it, OR","Possesses it without cardholder consent, intending to circulate/use/sell/transfer with intent to defraud.","Presumption of guilty knowledge if possessing 2+ cards issued to another person (business/employment exception applies)."]},
+ {name:"UNAUTHORIZED SIGNING OF CREDIT CARD", nrs:"NRS 205.750", cls:"F", week:12, elements:["The signing of a credit/debit card, sales slip, sales draft or payment instrument evidencing a card transaction,","Without authorization by the cardholder, with intent to defraud."]},
+ {name:"FRAUDULENT USE OF CREDIT CARD", nrs:"NRS 205.760", cls:"M/F", week:12, elements:["Using a credit/debit card to obtain money/goods/property/services/value where the card is stolen, forged, expired, revoked, or fraudulently signed/obtained/retained, OR","Using the card number/identifying description without cardholder consent, OR","Representing (without consent) that one is the authorized holder of a specific card or a card never issued.","Own revoked/expired card or insufficient funds: misdemeanor if under $100, felony if over $100."]},
+
+ {name:"TRAFFICKING IN MARIJUANA", nrs:"NRS 453.339", cls:"F", week:13, elements:["Knowingly and intentionally, actually or constructively,","Sells, manufactures, delivers or brings into this state,","50 to <1,000 lbs marijuana or 1–<20 lbs concentrated cannabis (Cat C);","1,000–<5,000 lbs or 20–<100 lbs concentrated cannabis (Cat B);","5,000+ lbs marijuana or 100+ lbs concentrated cannabis (Cat A)."]},
+ {name:"UNLAWFUL USE OF CONTROLLED SUBSTANCE", nrs:"NRS 453.411", cls:"F", week:13, elements:["Knowingly uses or is under the influence of an illegal controlled substance (schedules I–IV)."]},
+ {name:"USE/POSSESS DRUGS TO PRODUCE EUPHORIA", nrs:"NRS 454.346", cls:"M", week:13, elements:["Inhale, ingest, apply or otherwise use or possess (with intent to use),","Any drug, chemical, poison or organic solvent (or combination),","Contrary to directions/cautions/warnings,","In order to create or induce intoxication, euphoria, hallucination or elation."]},
+ {name:"MANUFACTURE/POSSESS/USE DANGEROUS WEAPON", nrs:"NRS 202.350", cls:"GM/F", week:13, elements:["Manufacture, import, keep, offer for sale, give, lend or possess any blackjack, slung shot, billy, sand-club, sandbag, metal knuckles, machine gun, pneumatic gun or silencer, OR","Possess or use a nunchaku or trefoil with intent to inflict harm.","1st offense = GM; 2nd = F."]},
+
+ {name:"POSSESSION OF SHORT-BARRELED RIFLE/SHOTGUN", nrs:"NRS 202.275", cls:"F", week:14, elements:["Knowingly or willfully possesses, manufactures or disposes of,","A rifle with a barrel under 16 inches (or overall length under 26 inches), OR","A shotgun with a barrel under 18 inches (or overall length under 26 inches)."]},
+ {name:"CHANGED/ALTERED SERIAL NUMBER ON FIREARM", nrs:"NRS 202.277", cls:"F", week:14, elements:["Intentionally changing, altering, removing or obliterating a firearm's serial number, OR","Knowingly possessing a firearm with a serial number so altered/removed/obliterated."]},
+ {name:"DISCHARGING FIREARM AT/INTO STRUCTURE OR VEHICLE", nrs:"NRS 202.285", cls:"M/F", week:14, elements:["Willfully and maliciously discharges a firearm,","At or into any house, room, apartment, shop, store or other building, vehicle or boat, etc.","Abandoned structure: M. Occupied structure: F."]},
+ {name:"DISCHARGING FIREARM OUT OF STRUCTURE OR MOTOR VEHICLE", nrs:"NRS 202.287", cls:"M/F", week:14, elements:["A person in, on or under a structure or vehicle,","Who maliciously or wantonly discharges a firearm within or from it.","Within a designated populated area: F. Not within a designated populated area: M."]},
+ {name:"DISCHARGING FIREARM / THROWING DEADLY MISSILE", nrs:"NRS 202.290", cls:"GM", week:14, elements:["Willfully discharges any firearm, air gun or other weapon, OR","Willfully throws any deadly missile,","In a public place or anywhere a person might be endangered, even if no injury results."]},
+
+ {name:"CHILD ABUSE & NEGLECT", nrs:"NRS 200.508", cls:"GM/F", week:15, elements:["A person willfully causes a child (under 18) to suffer unjustifiable physical pain or mental suffering as a result of abuse/neglect, or places the child in a situation where such suffering may occur (F), OR","A person responsible for the child's safety/welfare permits or allows the same (GM).","F if substantial bodily/mental harm results, or if previously convicted of abuse/neglect."]},
+ {name:"DETAIN/CONCEAL/REMOVE CHILD", nrs:"NRS 200.359", cls:"F", week:15, elements:["A person with limited custody/visitation rights, or a parent with no right of custody,","Willfully detains, conceals or removes the child from the parent/guardian/lawful custodian or a person with visitation rights,","In violation of a court order."]},
+ {name:"CONTRIBUTING DELINQUENCY/NEGLECT OF MINOR", nrs:"NRS 201.110", cls:"M", week:15, elements:["Does any act, or omits a duty,","Which causes or tends to cause a person under 18 to become a neglected, in-need-of-supervision, or delinquent child,","As defined by an extensive list including: begging, no proper parental control, destitute, unfit home, wandering with no home/guardian, frequenting criminals/vagrants/prostitutes, unlawfully visiting bars, habitual substance use, habitual disobedience/truancy, immoral conduct, or violating any criminal law/ordinance."]},
+ {name:"OPEN AND GROSS LEWDNESS", nrs:"NRS 201.210", cls:"GM/F", week:15, elements:["Any act in an open or public place,","More than just exposure — e.g., groping, rubbing, touching of one's own person or another's.","1st offense = GM; 2nd = F."]},
+ {name:"INDECENT EXPOSURE", nrs:"NRS 201.220", cls:"GM/F", week:15, elements:["Open and indecent or obscene exposure,","Of one's person, or of the person of another.","1st offense = GM; 2nd = F."]},
+ {name:"LEWDNESS WITH A CHILD UNDER 16 YEARS", nrs:"NRS 201.230", cls:"F", week:15, elements:["Willfully commits a lewd act other than sexual assault,","If 18 or older, of a child under 16; or if under 18, of a child under 14,","With intent of arousing, appealing to, or gratifying the lust, passions or sexual desires of the person or victim."]},
+ {name:"KIDNAPPING – FIRST DEGREE", nrs:"NRS 200.310", cls:"F", week:15, elements:["Willfully seizes, confines, entices, decoys, abducts, conceals, kidnaps or carries away a person by any means,","With intent to hold/detain for ransom, reward, committing sexual assault/extortion/robbery, or for purpose of killing or inflicting substantial bodily harm, OR","Leads/takes/entices/carries away/detains any minor with intent to keep from parents/guardian or hold to unlawful service or perpetrate an unlawful act."]},
+ {name:"KIDNAPPING – SECOND DEGREE", nrs:"NRS 200.310", cls:"F", week:15, elements:["Willfully seizes, takes, carries away or kidnaps another person,","With intent to keep secretly imprisoned within the state, convey out of state, hold to service, or detain against the victim's will."]},
+ {name:"UNLAWFUL CONTACT WITH CHILD OR MENTALLY ILL PERSON", nrs:"NRS 207.260", cls:"GM/F", week:15, elements:["A person, without lawful authority, willfully or maliciously,","Engages in a course of conduct with a child under 16 (at least 5 years younger) or with a mentally ill person,","Which would cause a reasonable person of like age/condition to feel terrorized, frightened, intimidated or harassed, and","Actually causes that reaction.","1st offense = GM; 2nd = F."]},
+
+ // Supplemental / general reference crimes (referenced in the statute pages but not separately assigned their own week in the schedule)
+ {name:"OFFENSE PROPORTIONATE TO VALUE OF PROPERTY AFFECTED", nrs:"NRS 193.155", cls:"—", week:null, elements:["Value of loss less than $25: fine of not more than $500.","Value of loss $25–$250: Misdemeanor.","Value of loss $250–$5,000: Gross Misdemeanor.","Value of loss $5,000+ or impairment of public communication/transportation/police/fire protection: Category C Felony."]},
+ {name:"ADDITIONAL PENALTY: USE OF DEADLY WEAPON", nrs:"NRS 193.165", cls:"—", week:null, elements:["Any person who uses a firearm, other deadly weapon, or a tear-gas weapon in the commission of a crime,","Is imprisoned for a term equal to and in addition to the term prescribed for the underlying crime."]},
+ {name:"ADDITIONAL PENALTY: CERTAIN CRIMES AGAINST PERSON 60+", nrs:"NRS 193.167", cls:"—", week:null, elements:["Any person who commits murder, attempted murder, assault, battery, kidnapping, robbery, sexual assault, embezzlement over $650, or theft $650+ against a victim 60 or older,","Is imprisoned for a term equal to and in addition to the term prescribed for the underlying crime."]},
+ {name:"ATTEMPTS", nrs:"NRS 193.330", cls:"—", week:null, elements:["An act done with the intent to commit a crime, and tending but failing to accomplish it."]},
+ {name:"ROUT AND RIOT", nrs:"NRS 203.070", cls:"M", week:null, elements:["Two or more persons meet to do an unlawful act upon a common cause of quarrel and make advances toward it = Rout, OR","Two or more persons actually do an unlawful act of violence (with or without common quarrel), or do a lawful act in a violent, tumultuous, illegal manner = Riot."]},
+ {name:"BURGLARY", nrs:"NRS 205.060", cls:"F", week:null, elements:["Enters any structure (house, apartment, store, vehicle, trailer, boat, plane or other building),","With the intent to commit grand or petit larceny, assault, battery or any felony.","Note: intent to commit petit larceny in an open commercial business alone is insufficient unless perpetrator has two prior petty-theft convictions within 7 years or a prior felony conviction. (See also Week 4 Elements of Definitions: Burglary.)"]},
+ {name:"HOME INVASION", nrs:"NRS 205.067", cls:"F", week:null, elements:["Forcible entry of an inhabited dwelling, without permission of the owner/lawful occupant,","Whether or not a person is present, involving any act of physical force resulting in damage to the structure.","No intent to commit a crime is needed. (See also Week 4 Verbatim: Home Invasion.)"]},
+ {name:"HOME INVASION WITH A WEAPON/FIREARM", nrs:"NRS 205.067", cls:"F", week:null, elements:["Same as Home Invasion, and","Has in his possession, or gains possession of, any firearm or deadly weapon at any time during the crime or upon leaving the structure."]},
+ {name:"LARCENY FROM PERSON", nrs:"NRS 205.270", cls:"F", week:null, elements:["A person, under circumstances not amounting to robbery, with intent to steal or appropriate,","Takes property from the person of another without the victim's consent. (See also Week 5 Verbatim: Larceny From Person.)"]},
+ {name:"ROBBERY", nrs:"NRS 200.380", cls:"F", week:null, elements:["Unlawful taking of personal property from the person of another, or in his presence, against the victim's will,","By force, violence, threat of violence, or fear of injury immediate or future, to the victim, a family member, or a person in his company.","Degree of force is immaterial if used to compel acquiescence or to escape with the property. (See also Week 5 Verbatim: Robbery.)"]},
+ {name:"BATTERY WITH INTENT TO COMMIT A CRIME", nrs:"NRS 200.400", cls:"F", week:null, elements:["Willful & unlawful use of force or violence upon the person of another,","With the intent to kill, or to commit robbery, sexual assault, mayhem, or grand larceny."]},
+ {name:"ASSAULT", nrs:"NRS 200.471", cls:"M", week:null, elements:["Intentionally placing another person in reasonable apprehension of immediate bodily harm. (See also Week 3 Verbatim: Assault.)"]},
+ {name:"BATTERY", nrs:"NRS 200.481", cls:"M", week:null, elements:["Willful & unlawful use of force or violence upon the person of another. (See also Week 3 Verbatim: Battery.)"]},
+ {name:"MAKE/UTTER/POSSESS FICTITIOUS BILL/NOTE/CHECK", nrs:"NRS 205.100", cls:"F", week:null, elements:["Makes, passes, utters, publishes (or attempts to),","With intent to defraud, any fictitious bill, note or check,","Knowing it is fictitious."]},
+ {name:"UTTER FORGED INSTRUMENT", nrs:"NRS 205.110", cls:"F", week:null, elements:["Knowing an instrument is forged or altered, with intent to defraud,","Utters, offers, or possesses with intent to utter, any forged instrument."]},
+ {name:"POSSESS/RECEIVE FORGED INSTRUMENT", nrs:"NRS 205.160", cls:"F", week:null, elements:["Possesses or receives from another any forged instrument for payment of money/property,","With intent to pass it or procure it to be uttered/passed, with intent to defraud, knowing it to be forged."]},
+ {name:"POSSESS/SELL DOCUMENT OR PERSONAL IDENTIFYING INFO", nrs:"NRS 205.465", cls:"M/F", week:null, elements:["Possesses, sells or transfers any document or personal identifying info to establish a false status/identity for self or another, OR","To commit forgery, computer crime, or credit/debit card crime.","Possession solely to establish false proof of age (gaming/alcohol/tobacco) = M."]},
+ {name:"COERCION", nrs:"NRS 207.190", cls:"M/F", week:null, elements:["Compel another to do or abstain from doing an act which the other person has a right to do or abstain from doing.","Physical force or immediate threat of force used = Felony. No physical force/threat used = Misdemeanor."]},
+ {name:"FALSE REPORTING OF CRIMES", nrs:"NRS 207.280", cls:"M", week:null, elements:["Any person who reports to a police officer, sheriff, DA, deputy sheriff, deputy DA, or Dept. of Public Safety member,","That a felony or misdemeanor has been committed (or disseminates such a report via public communication),","Knowing the report to be false."]},
+ {name:"POSSESSION OF LESS THAN 1 OZ MARIJUANA BY PERSON UNDER 21", nrs:"NRS 453.336", cls:"M", week:null, elements:["Possesses 1 ounce or less of marijuana while under 21 years of age."]},
+ {name:"ADDITIONAL PENALTY: DRUG OFFENSES NEAR SCHOOL", nrs:"NRS 453.3345", cls:"—", week:null, elements:["On the grounds of a public/private school, playground, public park, public pool, youth recreation center, video arcade, or NSHE campus,","Or within 1,000 feet of a school bus stop from 1 hour before to 1 hour after school on scheduled school days,","Imprisoned for a term equal to and in addition to the term prescribed for the underlying crime."]},
+ {name:"DRUG CONSPIRACY", nrs:"NRS 453.401", cls:"F/GM", week:null, elements:["Two or more persons conspire to commit a felony under the Uniform Controlled Substances Act and one conspirator acts in furtherance = Felony (each conspirator).","Conspiring to unlawfully possess more than 1 oz of marijuana = Gross Misdemeanor."]},
+ {name:"DRUGS WHICH MAY NOT BE INTRODUCED INTO INTERSTATE COMMERCE", nrs:"NRS 454.351", cls:"M", week:null, elements:["Possesses, procures, obtains, processes, produces, derives, manufactures, sells, offers for sale, gives away or furnishes any drug that may not lawfully be introduced into interstate commerce under the Federal Food, Drug and Cosmetic Act."]},
+];
+
+// 400-series radio codes (numeric). Each code is tagged with the week it's
+// due, based on the cumulative code ranges in the study schedule
+// (Week 1: 401-405Z, Week 2: 406-411Z, Week 3: 412A-416U, Week 4: 417-425B,
+// Week 5: 426-437FS, Week 6: 438-460, Week 7: 463-497). Codes outside any
+// listed range (498, 499) are tagged supplemental (week:null).
+const CODES400 = [
+ // Week 1: 401 - 405Z
+ ["401","Accident",1],["401A","Accident Hit & Run",1],["401B","Accident with Injury",1],["401C","Accident Private Property",1],["401P","Accident Processing",1],
+ ["402","Fire",1],["402B","Arson",1],["402P","Fire Processing",1],
+ ["403","Prowler",1],
+ ["404","Unknown Problem",1],["404A","911 Disconnect",1],["404AV","Accident 911 info Verified",1],["404C","Unknown Problem – COH",1],
+ ["405","Suicide",1],["405A","Suicide Threat",1],["405P","Suicide Processing",1],["405Z","Suicide Attempt",1],
+ // Week 2: 406 - 411Z
+ ["406","Burglary",2],["406A","Burglary Alarm",2],["406H","Hot Prowl",2],["406P","Burglary Processing",2],["406Z","Burglary Attempt",2],
+ ["407","Robbery",2],["407A","Robbery Alarm",2],["407B","B-Pack/Tower Alarm",2],["407E","ESP Robbery Alarm",2],["407P","Robbery Processing",2],["407Z","Robbery Attempt",2],
+ ["408","Drunk",2],["409","Drunk Driver",2],["410","Reckless Driving",2],["410R","Road Rage",2],
+ ["411","Stolen Vehicle",2],["411A","Recovered Stolen Vehicle",2],["411B","Bait Car Activation",2],["411P","Stolen License Plate(s)",2],["411Z","Stolen Vehicle Attempt",2],
+ // Week 3: 412A - 416U
+ ["412A","Repossessed Vehicle",3],["412B","Abandoned Vehicle",3],["412C","Disabled Vehicle",3],
+ ["413","Subject with a Gun",3],["413A","Subject with Knife",3],["413B","Subject with Other Weapon",3],
+ ["414","Grand Larceny",3],["414A","Petit Larceny",3],["414B","Theft from a Vehicle",3],["414C","Theft from a Person",3],["414P","Theft Processing",3],["414S","Petit Larceny – Security Report",3],["414Z","Larceny Attempt",3],
+ ["415","Assault/Battery",3],["415A","Assault/Battery w/Gun",3],["415B","Assault/Battery w/Knife",3],["415C","Assault/Battery w/Other Weapon",3],["415D","Domestic Battery",3],["415E","Battery on Officer",3],["415P","Battery Processing",3],
+ ["416","Fight",3],["416A","Juvenile Disturbance",3],["416B","Other Disturbance",3],["416U","Union Disturbance",3],
+ // Week 4: 417 - 425B (425L follows immediately after 425B in the booklet's sequence)
+ ["417","Family Disturbance",4],
+ ["418","Missing Person",4],["418A","Found Person",4],["418B","Runaway Juvenile",4],
+ ["419","Dead Body",4],["419A","Drowned Person",4],["419P","Dead Person Processing",4],
+ ["420","Homicide",4],["420P","Homicide Processing",4],["420Z","Homicide Attempt",4],
+ ["421A","Mentally Ill Person",4],["421C","Medical Condition",4],
+ ["423","See the Person",4],
+ ["424","Riot",4],
+ ["425","Suspicious Circumstances",4],["425A","Suspicious Person",4],["425B","Suspicious Vehicle",4],["425L","Suspicious Luring",4],
+ // Week 5: 426 - 437FS
+ ["426","Sexual Assault",5],["426P","Sexual Assault Processing",5],["426Z","Sexual Assault Attempt",5],
+ ["427","Kidnap",5],["427P","Kidnap Processing",5],["427Z","Kidnap Attempt",5],
+ ["428","Lewdness/Entice Minor",5],["428A","Child Abuse/Neglect",5],["428E","Elder Abuse/Neglect",5],["428P","Lewdness/Abuse/Neglect Processing",5],["428Z","Attempt Lewdness w/Minor",5],
+ ["429","Indecent Exposure",5],
+ ["430","Animal Bite",5],["430A","Animal Complaint",5],["430N","Animal Control Neighborhood Patrol",5],["430P","Animal Control Park Patrol",5],
+ ["431","Found Property",5],
+ ["432","Fraud",5],["433","Stolen Property",5],["434","Illegal Shooting",5],["435","Embezzlement",5],["436","Attempt to Locate",5],
+ ["437","Keep the Peace/Assist Citizen",5],["437B","Assist Other Jurisdiction",5],["437E","Assist Elderly",5],["437F","Assist Henderson Fire Department",5],["437FE","Assist HFD Emergency",5],["437FS","Broadcast Info on Structure Fire",5],
+ // Week 6: 438 - 460
+ ["438","Traffic Problem",6],["438P","Parking Problem",6],
+ ["439","Overtime Assignment",6],["439A","Follow-Up Investigation",6],["439AC","Follow-Up – Animal Control",6],["439C","Corrections Detail",6],["439P","Processing Crime Scene",6],["439S","Search Warrant",6],
+ ["440","Wanted Person",6],
+ ["441","Vandalism",6],["441P","Vandalism Processing",6],
+ ["442","Plane Crash",6],["442A","Emergency Landing",6],["442B","Possible Plane Down",6],["442P","Plane Processing",6],
+ ["444","Officer Needs Help",6],["444FE","Fire 444",6],
+ ["445","Bomb",6],["445A","Bomb Threat",6],["445B","Found Explosives",6],["445P","Bomb/Explosive Processing",6],
+ ["446","Narcotics",6],["446I","Narcotics Investigation",6],
+ ["447","Civil Matter",6],["447A","Non-Specific Criminal Act",6],["447D","Illegal Dumping",6],["447S","Trespass – Security Report",6],["447T","Threats/Harassment",6],
+ ["448","Stalking",6],["448A","Protective Order Violation",6],["448S","Protective Order Service",6],
+ // Week 7: 463 - 497
+ ["481A","Community Policing",7],["481C","Crime Free Multi-Housing",7],["481D","DREAMS",7],["481H","Homeless",7],["481I","Inspections (CPTED)",7],["481N","Neighborhood Watch",7],["481S","Summons",7],
+ ["485","Stakeout",7],
+ ["487","Traffic Stop",7],
+ ["489","Bar/Perimeter Check",7],["489S","School Perimeter Check",7],
+ ["497","Citizen Complaint",7],
+ // Not covered by a specific week range in the schedule
+ ["498","Use of Force (Corrections only)",null],
+ ["499","Statistical (Communications only)",null],
+].map(([code,desc,week])=>({code,desc,week}));
+
+// Misc / Code 1-10 style codes.
+// Week 8: Code 1-5. Week 9: Code 6A, 6B, 6C, 7, 8, 9, Code Red (as listed in
+// the schedule). Plain "Code 6" and "Code 7A" aren't separately listed in any
+// week, and Code 10 / Code 30 aren't listed either — tagged supplemental.
+const MISC_CODES = [
+ ["Code 1","Routine Assignment",8],
+ ["Code 2","Urgent Assignment",8],
+ ["Code 3","Emergency Assignment (lights and sirens)",8],
+ ["Code 4","Situation Under Control",8],
+ ["Code 5","Video Camera in Use",8],
+ ["Code 6","Felony Want or Gross Misdemeanor",null],
+ ["Code 6A","Misdemeanor Want",9],
+ ["Code 6B","Criminal History",9],
+ ["Code 6C","Criminal History Caution",9],
+ ["Code 7","Lunch",9],
+ ["Code 7A","Rest Break",null],
+ ["Code 8","Police / Fire Employee Involved",9],
+ ["Code 9","Back Up Unit",9],
+ ["Code 10","Scanner In Use",null],
+ ["Code 30","Doesn't Conform to Proper Radio Procedures",null],
+ ["Code Red","Emergency Traffic Only",9],
+].map(([code,desc,week])=>({code,desc,week}));
+
+// Phonetic alphabet: Week 1 = A-I, Week 2 = J-R, Week 3 = S-Z
+const PHONETICS = [
+ ["A","ADAM",1],["B","BAKER",1],["C","CHARLIE",1],["D","DAVID",1],["E","EDWARD",1],["F","FRANK",1],["G","GEORGE",1],["H","HENRY",1],["I","IDA",1],
+ ["J","JOHN",2],["K","KING",2],["L","LINCOLN",2],["M","MARY",2],["N","NORA",2],["O","OCEAN",2],["P","PAUL",2],["Q","QUEEN",2],["R","ROBERT",2],
+ ["S","SAM",3],["T","TOM",3],["U","UNION",3],["V","VICTOR",3],["W","WILLIAM",3],["X","X-RAY",3],["Y","YELLOW",3],["Z","ZEBRA",3],
+].map(([letter,word,week])=>({letter,word,week}));
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function pick(arr,n){ return shuffle(arr).slice(0,n); }
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function highlightMatch(text, q){
+  if(!q) return escapeHtml(text);
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if(idx===-1) return escapeHtml(text);
+  return escapeHtml(text.slice(0,idx)) + "<mark>" + escapeHtml(text.slice(idx,idx+q.length)) + "</mark>" + escapeHtml(text.slice(idx+q.length));
+}
+
+// Build unified pool with normalized fields: {category, week, front, backHtml, plainBack}
+function buildPool(category){
+  const pool = [];
+  if(category==="all" || category==="verbatim"){
+    VERBATIMS.forEach(v=>pool.push({category:"verbatim",catLabel:"Verbatim Definition",week:v.week,front:v.term,backHtml:`<p>${escapeHtml(v.def)}</p>`,plainBack:v.def}));
+  }
+  if(category==="all" || category==="elements"){
+    ELEMENTS_OF_DEF.forEach(v=>pool.push({category:"elements",catLabel:"Elements of Definition",week:v.week,front:v.term,backHtml:`<p>${escapeHtml(v.def)}</p>`,plainBack:v.def}));
+  }
+  if(category==="all" || category==="crime"){
+    CRIMES.forEach(c=>pool.push({
+      category:"crime",catLabel:"Crime Elements",week:c.week,
+      front:c.name,
+      backHtml:`<p><strong>${escapeHtml(c.nrs)}</strong> &nbsp; Classification: <strong>${escapeHtml(c.cls)}</strong></p><ul>${c.elements.map(e=>`<li>${escapeHtml(e)}</li>`).join("")}</ul>`,
+      plainBack: c.nrs+" ("+c.cls+"): "+c.elements.join(" ")
+    }));
+  }
+  if(category==="all" || category==="code400"){
+    CODES400.forEach(c=>pool.push({category:"code400",catLabel:"400 Code",week:c.week,front:c.code,backHtml:`<p>${escapeHtml(c.desc)}</p>`,plainBack:c.desc}));
+  }
+  if(category==="all" || category==="miscCode"){
+    MISC_CODES.forEach(c=>pool.push({category:"miscCode",catLabel:"Radio / Misc Code",week:c.week,front:c.code,backHtml:`<p>${escapeHtml(c.desc)}</p>`,plainBack:c.desc}));
+  }
+  if(category==="all" || category==="phonetic"){
+    PHONETICS.forEach(p=>pool.push({category:"phonetic",catLabel:"Phonetic Alphabet",week:p.week,front:p.letter,backHtml:`<p>${escapeHtml(p.word)}</p>`,plainBack:p.word}));
+  }
+  if(category==="all" || category==="caselaw"){
+    Object.keys(WEEK_CASELAW).forEach(w=>{
+      WEEK_CASELAW[w].forEach(cite=>{
+        const name = cite.split(",")[0];
+        const info = CASELAW_INFO[cite] || "";
+        pool.push({category:"caselaw",catLabel:"Case Law",week:Number(w),front:name,backHtml:`<p><strong>${escapeHtml(cite)}</strong></p><p style="font-size:13px;color:#5b6472;">${escapeHtml(info)}</p>`,plainBack:cite+" — "+info,citeOnly:cite});
+      });
+    });
+  }
+  return pool;
+}
+
+function weekMatches(itemWeek, scope){
+  if(scope==="all") return true;
+  if(itemWeek===null || itemWeek===undefined) return scope==="all" || scope.startsWith("upto"); // supplemental items show up in "all weeks so far" views
+  if(scope.startsWith("week-")){
+    const n = Number(scope.split("-")[1]);
+    return itemWeek===n;
+  }
+  if(scope.startsWith("upto-")){
+    const n = Number(scope.split("-")[1]);
+    return itemWeek<=n;
+  }
+  return true;
+}
+
+function populateWeekSelect(sel, includeUpto){
+  sel.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value="all"; optAll.textContent="All 15 weeks";
+  sel.appendChild(optAll);
+  for(let i=1;i<=15;i++){
+    const o = document.createElement("option");
+    o.value = "week-"+i;
+    o.textContent = "Week "+i+" only";
+    sel.appendChild(o);
+  }
+  for(let i=1;i<=15;i++){
+    const o = document.createElement("option");
+    o.value = "upto-"+i;
+    o.textContent = "Weeks 1–"+i+" (cumulative)";
+    sel.appendChild(o);
+  }
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+document.querySelectorAll("nav button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.panel).classList.add("active");
+  });
+});
+
+/* =========================================================
+   STUDY GUIDE
+   ========================================================= */
+function catList(arr, filterFn){
+  return arr.filter(filterFn).map(x=>x.term||x.name).join(" // ");
+}
+function renderGuide(){
+  const jump = document.getElementById("guideWeekJump");
+  jump.innerHTML = '<option value="">— select —</option>' + WEEK_META.map(w=>`<option value="w${w.n}">Week ${w.n}</option>`).join("");
+
+  let html = "";
+  WEEK_META.forEach(w=>{
+    const n = w.n;
+    const verb = VERBATIMS.filter(v=>v.week===n).map(v=>v.term);
+    const elems = ELEMENTS_OF_DEF.filter(v=>v.week===n).map(v=>v.term);
+    const crimes = CRIMES.filter(c=>c.week===n).map(c=>c.name);
+    const cases = WEEK_CASELAW[n] || [];
+    const codes = CODES400.filter(c=>c.week===n).map(c=>c.code);
+    const misc = MISC_CODES.filter(c=>c.week===n).map(c=>c.code);
+    const allCodes = codes.concat(misc);
+    const phon = PHONETICS.filter(p=>p.week===n).map(p=>p.letter+" – "+p.word);
+    html += `<div class="ref-item" id="w${n}">
+      <h3>Week ${n}</h3>
+      <div class="meta">Radio codes: ${w.codes || "—"} ${w.phonetics ? " · Phonetics: "+w.phonetics : ""}</div>
+      ${verb.length? `<p><strong>Verbatim Definitions:</strong> ${verb.map(t=>`<span class="tag gold">${escapeHtml(t)}</span>`).join(" ")}</p>`:""}
+      ${elems.length? `<p><strong>Elements of Definitions:</strong> ${elems.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join(" ")}</p>`:""}
+      ${crimes.length? `<p><strong>Crime Elements:</strong> ${crimes.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join(" ")}</p>`:""}
+      ${allCodes.length? `<p><strong>Radio Codes due this week (${allCodes.length}):</strong> ${allCodes.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join(" ")}</p>`:""}
+      ${phon.length? `<p><strong>Phonetic Alphabet due this week:</strong> ${phon.map(t=>`<span class="tag gold">${escapeHtml(t)}</span>`).join(" ")}</p>`:""}
+      ${n===10? `<p class="disclaimer" style="margin:6px 0 0;">Week 10 is a cumulative review — no new codes/phonetics are introduced, but recruits are responsible for all codes and phonetics from Weeks 1–9.</p>`:""}
+      ${cases.length? `<p><strong>Case Law:</strong> ${cases.map(c=>escapeHtml(c)).join("<br>")}</p>`:""}
+    </div>`;
+  });
+  document.getElementById("guideContent").innerHTML = html;
+
+  jump.onchange = ()=>{
+    if(jump.value){
+      document.getElementById(jump.value).scrollIntoView({behavior:"smooth", block:"start"});
+    }
+  };
+}
+document.getElementById("guideExpandAll").addEventListener("click", ()=>{
+  document.getElementById("guideContent").scrollIntoView({behavior:"smooth"});
+});
+
+/* =========================================================
+   FLASHCARDS
+   ========================================================= */
+let fcDeck = [];
+let fcIndex = 0;
+let fcFlipped = false;
+let fcScore = {got:0, miss:0};
+
+function renderFlashcardArea(){
+  const area = document.getElementById("fcArea");
+  if(fcDeck.length===0){
+    area.innerHTML = `<p class="no-results">Choose a category and week scope above, then click "Build deck" to start.</p>`;
+    return;
+  }
+  const item = fcDeck[fcIndex];
+  area.innerHTML = `
+    <div class="card-wrap">
+      <div class="progress-line">Card ${fcIndex+1} of ${fcDeck.length}</div>
+      <div class="flashcard" id="fcCardEl">
+        <span class="cat">${item.catLabel}</span>
+        <span class="weekmark">${item.week? "Week "+item.week : ""}</span>
+        ${fcFlipped
+          ? `<div class="back-text">${item.backHtml}</div><div class="hint">Click card to flip back</div>`
+          : `<div class="front-text">${escapeHtml(item.front)}</div><div class="hint">Click card to reveal answer</div>`
+        }
+      </div>
+      <div class="card-actions">
+        <button class="btn outline" id="fcPrev">◀ Prev</button>
+        <button class="btn red" id="fcMiss">✕ Missed it</button>
+        <button class="btn green" id="fcGot">✓ Got it</button>
+        <button class="btn outline" id="fcNext">Next ▶</button>
+      </div>
+      <div class="score-pills">
+        <span class="pill got">Got it: ${fcScore.got}</span>
+        <span class="pill miss">Missed: ${fcScore.miss}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById("fcCardEl").addEventListener("click", ()=>{
+    fcFlipped = !fcFlipped;
+    renderFlashcardArea();
+  });
+  document.getElementById("fcPrev").addEventListener("click", ()=>{
+    fcIndex = (fcIndex-1+fcDeck.length)%fcDeck.length;
+    fcFlipped=false;
+    renderFlashcardArea();
+  });
+  document.getElementById("fcNext").addEventListener("click", ()=>{
+    fcIndex = (fcIndex+1)%fcDeck.length;
+    fcFlipped=false;
+    renderFlashcardArea();
+  });
+  document.getElementById("fcGot").addEventListener("click", ()=>{
+    fcScore.got++;
+    fcIndex = (fcIndex+1)%fcDeck.length;
+    fcFlipped=false;
+    renderFlashcardArea();
+  });
+  document.getElementById("fcMiss").addEventListener("click", ()=>{
+    fcScore.miss++;
+    fcIndex = (fcIndex+1)%fcDeck.length;
+    fcFlipped=false;
+    renderFlashcardArea();
+  });
+}
+
+document.getElementById("fcStart").addEventListener("click", ()=>{
+  const cat = document.getElementById("fcCategory").value;
+  const scope = document.getElementById("fcWeekScope").value;
+  const order = document.getElementById("fcOrder").value;
+  let pool = buildPool(cat).filter(item=>weekMatches(item.week, scope));
+  if(order==="shuffle") pool = shuffle(pool);
+  fcDeck = pool;
+  fcIndex = 0;
+  fcFlipped = false;
+  fcScore = {got:0, miss:0};
+  renderFlashcardArea();
+});
+
+/* =========================================================
+   QUIZ
+   ========================================================= */
+let quizQuestions = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = [];
+
+function makeMCQ(pool, item){
+  // distractors from same category, fallback to whole pool
+  let sameCat = pool.filter(p=>p.category===item.category && p.front!==item.front);
+  let distractors = pick(sameCat, 3);
+  if(distractors.length<3){
+    const rest = pool.filter(p=>p.front!==item.front && !distractors.includes(p));
+    distractors = distractors.concat(pick(rest, 3-distractors.length));
+  }
+  const options = shuffle([{text:item.plainBack, correct:true}].concat(distractors.map(d=>({text:d.plainBack, correct:false}))));
+  return {
+    qtext: `What matches: "${item.front}"?`,
+    qcat: item.catLabel + (item.week? " · Week "+item.week : ""),
+    options,
+  };
+}
+
+function makeCrimeStatuteMCQ(pool, item){
+  const sameCat = CRIMES.filter(c=>c.name!==item.front);
+  const distractors = pick(sameCat,3).map(c=>c.nrs);
+  const correctCrime = CRIMES.find(c=>c.name===item.front);
+  const options = shuffle([{text:correctCrime.nrs, correct:true}].concat(distractors.map(d=>({text:d, correct:false}))));
+  return {
+    qtext: `Which statute corresponds to: "${item.front}"?`,
+    qcat: "Crime Elements" + (item.week? " · Week "+item.week : ""),
+    options,
+  };
+}
+
+function makeCaselawCiteMCQ(item){
+  const allCites = Object.values(WEEK_CASELAW).flat();
+  const distractors = pick(allCites.filter(c=>c!==item.citeOnly && !c.startsWith(item.front)),3);
+  const options = shuffle([{text:item.citeOnly, correct:true}].concat(distractors.map(d=>({text:d, correct:false}))));
+  return {
+    qtext: `Which citation matches the case: "${item.front}"?`,
+    qcat: "Case Law" + (item.week? " · Week "+item.week : ""),
+    options,
+  };
+}
+
+function buildQuizQuestions(category, scope, count){
+  const pool = buildPool(category==="mixed" ? "all" : category).filter(item=>weekMatches(item.week, scope));
+  const chosen = pick(pool, Math.min(count, pool.length));
+  return chosen.map(item=>{
+    if(item.category==="crime") return Object.assign({},makeCrimeStatuteMCQ(pool,item),{ref:item});
+    if(item.category==="caselaw") return Object.assign({},makeCaselawCiteMCQ(item),{ref:item});
+    return Object.assign({},makeMCQ(pool,item),{ref:item});
+  });
+}
+
+function renderQuiz(){
+  const area = document.getElementById("qzArea");
+  if(quizQuestions.length===0){
+    area.innerHTML = `<p class="no-results">Set your options above and click "Start quiz."</p>`;
+    return;
+  }
+  if(quizIndex >= quizQuestions.length){
+    // summary
+    const missed = quizAnswered.filter(a=>!a.correct);
+    area.innerHTML = `
+      <div class="quiz-summary">
+        <div class="bigscore">${quizScore} / ${quizQuestions.length}</div>
+        <p>Score: ${Math.round(100*quizScore/quizQuestions.length)}%</p>
+        <button class="btn gold" id="qzRestart">Take another quiz</button>
+      </div>
+      ${missed.length ? `<h3 style="font-family:Arial, sans-serif;color:var(--navy);margin-top:20px;">Review missed questions</h3>` + missed.map(m=>`
+        <div class="review-item">
+          <div class="rq">${escapeHtml(m.qtext)}</div>
+          <div>Your answer: <span class="ra-wrong">${escapeHtml(m.chosen)}</span></div>
+          <div>Correct answer: <span class="ra-correct">${escapeHtml(m.correctText)}</span></div>
+        </div>`).join("") : `<p class="no-results">Perfect score — nice work.</p>`}
+    `;
+    document.getElementById("qzRestart").addEventListener("click", ()=>{
+      quizQuestions=[]; quizIndex=0; quizScore=0; quizAnswered=[];
+      renderQuiz();
+    });
+    return;
+  }
+  const q = quizQuestions[quizIndex];
+  area.innerHTML = `
+    <div class="quiz-question">
+      <div class="qcat">${q.qcat} · Question ${quizIndex+1} of ${quizQuestions.length}</div>
+      <div class="qtext">${escapeHtml(q.qtext)}</div>
+      <div id="qzOptions">
+        ${q.options.map((o,i)=>`<button class="opt-btn" data-i="${i}">${escapeHtml(o.text)}</button>`).join("")}
+      </div>
+    </div>
+  `;
+  document.querySelectorAll("#qzOptions .opt-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = Number(btn.dataset.i);
+      const chosenOpt = q.options[i];
+      const correctOpt = q.options.find(o=>o.correct);
+      document.querySelectorAll("#qzOptions .opt-btn").forEach(b=>b.disabled=true);
+      document.querySelectorAll("#qzOptions .opt-btn").forEach((b,bi)=>{
+        if(q.options[bi].correct) b.classList.add("correct");
+        else if(bi===i) b.classList.add("wrong");
+      });
+      const correct = chosenOpt.correct;
+      if(correct) quizScore++;
+      quizAnswered.push({qtext:q.qtext, chosen:chosenOpt.text, correctText:correctOpt.text, correct});
+      setTimeout(()=>{
+        quizIndex++;
+        renderQuiz();
+      }, 900);
+    });
+  });
+}
+
+document.getElementById("qzStart").addEventListener("click", ()=>{
+  const cat = document.getElementById("qzCategory").value;
+  const scope = document.getElementById("qzWeekScope").value;
+  const count = Number(document.getElementById("qzCount").value);
+  quizQuestions = buildQuizQuestions(cat, scope, count);
+  quizIndex = 0;
+  quizScore = 0;
+  quizAnswered = [];
+  renderQuiz();
+});
+
+/* =========================================================
+   REFERENCE
+   ========================================================= */
+function renderReference(){
+  const q = document.getElementById("refSearch").value.trim().toLowerCase();
+  const cat = document.getElementById("refCategory").value;
+  const scope = document.getElementById("refWeekScope").value;
+  const pool = buildPool(cat==="all" ? "all" : cat).filter(item=>weekMatches(item.week, scope));
+  let filtered = pool;
+  if(q){
+    filtered = pool.filter(item=>
+      item.front.toLowerCase().includes(q) ||
+      item.plainBack.toLowerCase().includes(q)
+    );
+  }
+  const content = document.getElementById("refContent");
+  if(filtered.length===0){
+    content.innerHTML = `<p class="no-results">No matches. Try a different search term or category.</p>`;
+    return;
+  }
+  content.innerHTML = filtered.map(item=>`
+    <div class="ref-item">
+      <div class="meta">${item.catLabel}${item.week? " · Week "+item.week : ""}</div>
+      <h3>${highlightMatch(item.front,q)}</h3>
+      ${item.backHtml}
+    </div>
+  `).join("");
+}
+document.getElementById("refSearch").addEventListener("input", renderReference);
+document.getElementById("refCategory").addEventListener("change", renderReference);
+document.getElementById("refWeekScope").addEventListener("change", renderReference);
+
+/* =========================================================
+   INIT
+   ========================================================= */
+populateWeekSelect(document.getElementById("fcWeekScope"));
+populateWeekSelect(document.getElementById("qzWeekScope"));
+populateWeekSelect(document.getElementById("refWeekScope"));
+renderGuide();
+renderReference();
+renderFlashcardArea();
+renderQuiz();
+</script>
+</body>
+</html>
