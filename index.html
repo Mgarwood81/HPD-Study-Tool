@@ -123,6 +123,16 @@
   button.btn.red{background:var(--red);}
   button.btn:disabled{opacity:0.4;cursor:not-allowed;}
 
+  .chip-head{font-weight:bold;color:var(--navy);margin-bottom:6px;}
+  .chip-actions{font-weight:normal;font-size:12px;margin-left:8px;}
+  .chip-actions a{color:var(--navy);}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    display:inline-flex;flex-direction:row !important;align-items:center;gap:5px;
+    background:#fff;border:1px solid var(--border);border-radius:16px;
+    padding:4px 10px;cursor:pointer;color:var(--ink) !important;font-size:13px;
+  }
+  .chip:has(input:checked){background:var(--navy);color:#fff !important;border-color:var(--navy);}
   h2.section-title{
     font-size:22px;
     color:var(--navy);
@@ -397,29 +407,34 @@
   <!-- FLASHCARDS -->
   <section id="flash" class="panel">
     <h2 class="section-title">Flashcards</h2>
-    <div class="controls">
-      <label>Category
-        <select id="fcCategory">
-          <option value="all">Everything</option>
-          <option value="verbatim">Verbatim Definitions</option>
-          <option value="elements">Elements of Definitions</option>
-          <option value="crime">Crime Elements</option>
-          <option value="code400">400 Codes</option>
-          <option value="miscCode">Radio / Misc Codes</option>
-          <option value="phonetic">Phonetic Alphabet</option>
-          <option value="caselaw">Case Law</option>
-        </select>
-      </label>
-      <label>Week scope
-        <select id="fcWeekScope"></select>
-      </label>
-      <label>Order
-        <select id="fcOrder">
-          <option value="inorder">In order</option>
-          <option value="shuffle">Shuffled</option>
-        </select>
-      </label>
-      <button class="btn gold" id="fcStart">Build deck</button>
+    <div class="controls" style="flex-direction:column;align-items:stretch;">
+      <div>
+        <div class="chip-head">Categories <span class="chip-actions"><a href="#" id="fcCatAll">All</a> · <a href="#" id="fcCatNone">None</a></span></div>
+        <div class="chips" id="fcCatChips">
+          <label class="chip"><input type="checkbox" value="verbatim" checked> Verbatim Definitions</label>
+          <label class="chip"><input type="checkbox" value="elements" checked> Elements of Definitions</label>
+          <label class="chip"><input type="checkbox" value="crime" checked> Crime Elements</label>
+          <label class="chip"><input type="checkbox" value="code400" checked> 400 Codes</label>
+          <label class="chip"><input type="checkbox" value="miscCode" checked> Radio / Misc Codes</label>
+          <label class="chip"><input type="checkbox" value="phonetic" checked> Phonetic Alphabet</label>
+          <label class="chip"><input type="checkbox" value="caselaw" checked> Case Law</label>
+        </div>
+      </div>
+      <div>
+        <div class="chip-head">Weeks <span class="chip-actions"><a href="#" id="fcWkAll">All</a> · <a href="#" id="fcWkNone">None</a></span></div>
+        <div class="chips" id="fcWeekChips"></div>
+        <label class="chip" style="margin-top:6px;"><input type="checkbox" id="fcSupp" checked> Include items not assigned to a specific week</label>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+        <label>Order
+          <select id="fcOrder">
+            <option value="inorder">In order</option>
+            <option value="shuffle">Shuffled</option>
+          </select>
+        </label>
+        <button class="btn gold" id="fcStart">Build deck</button>
+        <span class="progress-line" id="fcCount"></span>
+      </div>
     </div>
     <div id="fcArea"></div>
   </section>
@@ -1037,11 +1052,41 @@ function renderFlashcardArea(){
   });
 }
 
+// Week chips
+(function(){
+  const box = document.getElementById("fcWeekChips");
+  for(let i=1;i<=15;i++){
+    const l = document.createElement("label");
+    l.className = "chip";
+    l.innerHTML = `<input type="checkbox" value="${i}" checked> Wk ${i}`;
+    box.appendChild(l);
+  }
+})();
+function setChecks(sel, val){
+  document.querySelectorAll(sel).forEach(c=>c.checked = val);
+  updateFcCount();
+}
+function fcSelection(){
+  const cats = [...document.querySelectorAll("#fcCatChips input:checked")].map(c=>c.value);
+  const weeks = [...document.querySelectorAll("#fcWeekChips input:checked")].map(c=>Number(c.value));
+  const supp = document.getElementById("fcSupp").checked;
+  let pool = [];
+  cats.forEach(c=>{ pool = pool.concat(buildPool(c)); });
+  return pool.filter(item => item.week===null || item.week===undefined ? supp : weeks.includes(item.week));
+}
+function updateFcCount(){
+  document.getElementById("fcCount").textContent = fcSelection().length + " cards selected";
+}
+document.getElementById("fcCatAll").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcCatChips input", true);});
+document.getElementById("fcCatNone").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcCatChips input", false);});
+document.getElementById("fcWkAll").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcWeekChips input", true);});
+document.getElementById("fcWkNone").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcWeekChips input", false);});
+document.querySelectorAll("#flash input[type=checkbox]").forEach(c=>c.addEventListener("change", updateFcCount));
+updateFcCount();
+
 document.getElementById("fcStart").addEventListener("click", ()=>{
-  const cat = document.getElementById("fcCategory").value;
-  const scope = document.getElementById("fcWeekScope").value;
   const order = document.getElementById("fcOrder").value;
-  let pool = buildPool(cat).filter(item=>weekMatches(item.week, scope));
+  let pool = fcSelection();
   if(order==="shuffle") pool = shuffle(pool);
   fcDeck = pool;
   fcIndex = 0;
@@ -1212,7 +1257,6 @@ document.getElementById("refWeekScope").addEventListener("change", renderReferen
 /* =========================================================
    INIT
    ========================================================= */
-populateWeekSelect(document.getElementById("fcWeekScope"));
 populateWeekSelect(document.getElementById("qzWeekScope"));
 populateWeekSelect(document.getElementById("refWeekScope"));
 renderGuide();
