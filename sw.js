@@ -8,7 +8,7 @@ self.addEventListener("activate", e=>{
   e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
   self.clients.claim();
 });
-// Network first (so updates show up right away when online), cache fallback when offline
+// Network first (updates show up right away when online), cache fallback when offline
 self.addEventListener("fetch", e=>{
   if(e.request.method!=="GET") return;
   e.respondWith(

@@ -437,7 +437,16 @@
             <option value="shuffle">Shuffled</option>
           </select>
         </label>
+        <label>Show
+          <select id="fcShow">
+            <option value="all">All selected cards</option>
+            <option value="todo">Not yet known (new + missed)</option>
+            <option value="missed">Missed only</option>
+            <option value="known">Known only (review)</option>
+          </select>
+        </label>
         <button class="btn gold" id="fcStart">Build deck</button>
+        <button class="btn outline" id="fcReset">Reset my progress</button>
         <span class="progress-line" id="fcCount"></span>
       </div>
     </div>
@@ -472,6 +481,7 @@
       </label>
       <button class="btn gold" id="qzStart">Start quiz</button>
     </div>
+    <div id="qzHistory"></div>
     <div id="qzArea"></div>
   </section>
 
@@ -994,6 +1004,39 @@ document.getElementById("guideExpandAll").addEventListener("click", ()=>{
 /* =========================================================
    FLASHCARDS
    ========================================================= */
+/* ---------- Saved progress (stored in this browser/device) ---------- */
+const STORE_KEY = "hpdStudyV1";
+let store = {cards:{}, settings:null, quiz:[]};
+try{
+  const raw = localStorage.getItem(STORE_KEY);
+  if(raw){ const p = JSON.parse(raw); store = {cards:p.cards||{}, settings:p.settings||null, quiz:p.quiz||[]}; }
+}catch(e){}
+function saveStore(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){} }
+function cardKey(item){ return item.category+"|"+item.front+"|"+String(item.plainBack).slice(0,40); }
+function cardStatus(item){
+  const r = store.cards[cardKey(item)];
+  if(!r) return "new";
+  return r.last==="got" ? "known" : "missed";
+}
+function recordResult(item, got){
+  const k = cardKey(item);
+  const r = store.cards[k] || {g:0,m:0,last:null};
+  if(got) r.g++; else r.m++;
+  r.last = got ? "got" : "miss";
+  store.cards[k] = r;
+  saveStore();
+}
+function saveSettings(){
+  store.settings = {
+    cats:[...document.querySelectorAll("#fcCatChips input:checked")].map(c=>c.value),
+    weeks:[...document.querySelectorAll("#fcWeekChips input:checked")].map(c=>c.value),
+    supp:document.getElementById("fcSupp").checked,
+    order:document.getElementById("fcOrder").value,
+    show:document.getElementById("fcShow").value
+  };
+  saveStore();
+}
+
 let fcDeck = [];
 let fcIndex = 0;
 let fcFlipped = false;
@@ -1006,9 +1049,12 @@ function renderFlashcardArea(){
     return;
   }
   const item = fcDeck[fcIndex];
+  const st = cardStatus(item);
+  const stLabel = {new:"New", known:"Known", missed:"Missed last time"}[st];
+  const knownCount = fcDeck.filter(d=>cardStatus(d)==="known").length;
   area.innerHTML = `
     <div class="card-wrap">
-      <div class="progress-line">Card ${fcIndex+1} of ${fcDeck.length}</div>
+      <div class="progress-line">Card ${fcIndex+1} of ${fcDeck.length} · Status: <strong>${stLabel}</strong> · Known in this deck: ${knownCount}/${fcDeck.length}</div>
       <div class="flashcard" id="fcCardEl">
         <span class="cat">${item.catLabel}</span>
         <span class="weekmark">${item.week? "Week "+item.week : ""}</span>
@@ -1045,12 +1091,14 @@ function renderFlashcardArea(){
   });
   document.getElementById("fcGot").addEventListener("click", ()=>{
     fcScore.got++;
+    recordResult(item, true);
     fcIndex = (fcIndex+1)%fcDeck.length;
     fcFlipped=false;
     renderFlashcardArea();
   });
   document.getElementById("fcMiss").addEventListener("click", ()=>{
     fcScore.miss++;
+    recordResult(item, false);
     fcIndex = (fcIndex+1)%fcDeck.length;
     fcFlipped=false;
     renderFlashcardArea();
@@ -1077,11 +1125,36 @@ function fcSelection(){
   const supp = document.getElementById("fcSupp").checked;
   let pool = [];
   cats.forEach(c=>{ pool = pool.concat(buildPool(c)); });
-  return pool.filter(item => item.week===null || item.week===undefined ? supp : weeks.includes(item.week));
+  pool = pool.filter(item => item.week===null || item.week===undefined ? supp : weeks.includes(item.week));
+  const show = document.getElementById("fcShow").value;
+  if(show==="todo") pool = pool.filter(i=>cardStatus(i)!=="known");
+  else if(show==="missed") pool = pool.filter(i=>cardStatus(i)==="missed");
+  else if(show==="known") pool = pool.filter(i=>cardStatus(i)==="known");
+  return pool;
 }
 function updateFcCount(){
   document.getElementById("fcCount").textContent = fcSelection().length + " cards selected";
+  saveSettings();
 }
+// Restore saved settings
+(function(){
+  const s = store.settings;
+  if(!s) return;
+  document.querySelectorAll("#fcCatChips input").forEach(c=>c.checked = s.cats.includes(c.value));
+  document.querySelectorAll("#fcWeekChips input").forEach(c=>c.checked = s.weeks.includes(c.value));
+  document.getElementById("fcSupp").checked = s.supp;
+  document.getElementById("fcOrder").value = s.order;
+  document.getElementById("fcShow").value = s.show;
+})();
+document.getElementById("fcShow").addEventListener("change", updateFcCount);
+document.getElementById("fcOrder").addEventListener("change", updateFcCount);
+document.getElementById("fcReset").addEventListener("click", ()=>{
+  if(confirm("Erase all saved flashcard and quiz progress on this device?")){
+    store.cards = {}; store.quiz = [];
+    saveStore();
+    fcDeck = []; renderFlashcardArea(); updateFcCount(); renderQuizHistory();
+  }
+});
 document.getElementById("fcCatAll").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcCatChips input", true);});
 document.getElementById("fcCatNone").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcCatChips input", false);});
 document.getElementById("fcWkAll").addEventListener("click", e=>{e.preventDefault(); setChecks("#fcWeekChips input", true);});
@@ -1157,8 +1230,18 @@ function buildQuizQuestions(category, scope, count){
   });
 }
 
+function renderQuizHistory(){
+  const el = document.getElementById("qzHistory");
+  if(!el) return;
+  const h = store.quiz.slice(-5).reverse();
+  if(!h.length){ el.innerHTML = ""; return; }
+  const best = Math.max(...store.quiz.map(r=>Math.round(100*r.score/r.total)));
+  el.innerHTML = `<div class="disclaimer" style="margin-top:0;"><strong>Your recent quizzes</strong> (best: ${best}%)<br>` +
+    h.map(r=>`${new Date(r.date).toLocaleDateString()} — ${r.score}/${r.total} (${Math.round(100*r.score/r.total)}%) · ${escapeHtml(r.cat)}`).join("<br>") + `</div>`;
+}
 function renderQuiz(){
   const area = document.getElementById("qzArea");
+  renderQuizHistory();
   if(quizQuestions.length===0){
     area.innerHTML = `<p class="no-results">Set your options above and click "Start quiz."</p>`;
     return;
@@ -1208,6 +1291,12 @@ function renderQuiz(){
       const correct = chosenOpt.correct;
       if(correct) quizScore++;
       quizAnswered.push({qtext:q.qtext, chosen:chosenOpt.text, correctText:correctOpt.text, correct});
+      if(q.ref) recordResult(q.ref, correct);
+      if(quizAnswered.length===quizQuestions.length){
+        store.quiz.push({date:new Date().toISOString(), score:quizScore, total:quizQuestions.length, cat:document.getElementById("qzCategory").value});
+        store.quiz = store.quiz.slice(-20);
+        saveStore();
+      }
       setTimeout(()=>{
         quizIndex++;
         renderQuiz();
